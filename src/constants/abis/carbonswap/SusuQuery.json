@@ -1,0 +1,269 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_factory",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_router",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_susu",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_chef",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_party",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_magic",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "chef",
+    "outputs": [
+      {
+        "internalType": "contract IChef",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "factory",
+    "outputs": [
+      {
+        "internalType": "contract IUniswapV2Factory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "magic",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "party",
+    "outputs": [
+      {
+        "internalType": "contract IParty",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_user",
+        "type": "address"
+      }
+    ],
+    "name": "query",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "totalSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "balance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sbalance",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct SusuQuery.StakeQuery",
+        "name": "",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "pid",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lpTotalSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lpChefSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lpBalance",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pending",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "allocPoint",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastRewardBlock",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "accRewardPerShare",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "deposit",
+            "type": "uint256"
+          },
+          {
+            "internalType": "int256",
+            "name": "rewardDebt",
+            "type": "int256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewarder",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "lpToken",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "lpToken0",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "lpToken1",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lpToken0Decimals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lpToken1Decimals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "lpToken0Name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "lpToken0Symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "lpToken1Symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "lpToken1Name",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct SusuQuery.FarmQuery[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "router",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "susu",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
