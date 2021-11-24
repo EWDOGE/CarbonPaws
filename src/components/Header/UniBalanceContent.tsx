@@ -133,13 +133,8 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
               */}
               <AutoColumn gap="md">
                 <RowBetween>
-                  <TYPE.white color="white">SUSU Balance:</TYPE.white>
+                  <TYPE.white color="white">EWD Balance:</TYPE.white>
                   <TYPE.white color="white">{balances['susu']?.toFixed(2, { groupSeparator: ',' })}</TYPE.white>
-                </RowBetween>
-
-                <RowBetween>
-                  <TYPE.white color="white">xSUSU Balance:</TYPE.white>
-                  <TYPE.white color="white">{balances['xsusu']?.toFixed(2, { groupSeparator: ',' })}</TYPE.white>
                 </RowBetween>
 
                 {/*
@@ -177,16 +172,12 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
             </RowBetween>
             */}
             <RowBetween>
-              <TYPE.white color="white">SUSU Total Supply</TYPE.white>
-              <TYPE.white color="white">{totalSupplies['susu']?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
-            </RowBetween>
-            <RowBetween>
-              <TYPE.white color="white">xSUSU Total Supply</TYPE.white>
-              <TYPE.white color="white">{totalSupplies['xsusu']?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
+              <TYPE.white color="white">EWD Total Supply</TYPE.white>
+              <TYPE.white color="white">{totalSupplies['ewd']?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
             </RowBetween>
             {susu && susu.chainId === ChainId.EWC ? (
-              <ExternalLink href={`https://info.carbonswap.exchange/token/${susu.address}`}>
-                View SUSU Analytics
+              <ExternalLink href={`https://info.carbonswap.exchange/token/0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891`}>
+                View EWD Analytics
               </ExternalLink>
             ) : null}
           </AutoColumn>

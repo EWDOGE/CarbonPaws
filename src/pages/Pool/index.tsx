@@ -170,18 +170,11 @@ export default function Pool() {
     <>
       {isDesktopResolution && (
         <img
-          className="d-none d-lg-block"
-          style={{
-            maxWidth: '80%',
-            width: '420px',
-            marginBottom: '60px',
-            textAlign: 'center',
-            marginLeft: 'auto',
-            marginRight: 'auto'
-          }}
-          id="logo"
-          src={require('./../../assets/images/3.png')}
-        />
+        className="d-none d-lg-block"
+        style={{ maxWidth: '30%', width: '150px', marginBottom: '40px' }}
+        id="logo"
+        src={require('./../../assets/images/ewd.png')}
+      />
       )}
       <PageWrapper>
         <SwapPoolTabs active={'pool'} />

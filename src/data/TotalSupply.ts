@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { ChainId, Token, TokenAmount } from '@uniswap/sdk'
-import { SUSU_ADDRESS, PARTY_ADDRESS, SUSU } from '../constants'
+import { SUSU_ADDRESS, PARTY_ADDRESS, SUSU, EWD_ADDRESS } from '../constants'
 import { useActiveWeb3React } from 'hooks'
 import ERC20_INTERFACE from '../constants/abis/erc20'
 import { useTokenContract } from '../hooks/useContract'
@@ -21,16 +21,10 @@ export function useTotalSupply(token?: Token): TokenAmount | undefined {
 export function useAllSusuTotalSupply(): { [tokenAddress: string]: TokenAmount | undefined } {
   const { account, chainId } = useActiveWeb3React()
 
-  const sa = SUSU_ADDRESS[chainId ?? ChainId.EWC] as string
+  const sa = EWD_ADDRESS[chainId ?? ChainId.EWC] as string
   const alist: string[] = []
   if (sa) {
     alist.push(sa)
-  }
-
-  const pa = PARTY_ADDRESS[chainId ?? ChainId.EWC] as string
-
-  if (pa) {
-    alist.push(pa)
   }
 
   const balances = useMultipleContractSingleData(alist, ERC20_INTERFACE, 'totalSupply')
@@ -45,11 +39,7 @@ export function useAllSusuTotalSupply(): { [tokenAddress: string]: TokenAmount |
   })
 
   if (sa) {
-    totalSupplies['susu'] = totalSupplies[sa]
-  }
-
-  if (pa) {
-    totalSupplies['xsusu'] = totalSupplies[pa]
+    totalSupplies['ewd'] = totalSupplies[sa]
   }
 
   return totalSupplies

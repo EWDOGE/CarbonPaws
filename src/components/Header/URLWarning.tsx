@@ -30,7 +30,7 @@ export default function URLWarning() {
     <PhishAlert isActive={showURLWarning}>
       <div style={{ display: 'flex' }}>
         <AlertTriangle style={{ marginRight: 6 }} size={12} /> Make sure the URL is
-        <code style={{ padding: '0 4px', display: 'inline', fontWeight: 'bold' }}>carbonswap.exchange</code>
+        <code style={{ padding: '0 4px', display: 'inline', fontWeight: 'bold' }}>app.ewd.green</code>
       </div>
       <StyledClose size={12} onClick={toggleURLWarning} />
     </PhishAlert>

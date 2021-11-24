@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Logo from '../../assets/svg/logo.svg'
-import LogoDark from '../../assets/svg/logo_white.svg'
+import LogoDark from '../../assets/images/dogo.png'
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { useETHBalances, useSusuBalances } from '../../state/wallet/hooks'
@@ -276,7 +276,7 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   }
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      display: none;
+      
 `}
 `
 
@@ -382,13 +382,21 @@ export default function Header() {
               pathname.startsWith('/find')
             }
           >
-            {t('pool')}
+            {t('Pool')}
           </StyledNavLink>
 
           {/* ENABLE HERE */}
-          <StyledNavLink id={`farm-nav-link`} to={'/farm'}>
+          <StyledNavLink id={`farm-nav-link`} to={'javascript:void(0)'}>
             {t('Farming')}
           </StyledNavLink>
+
+          <StyledNavLink id={`farm-nav-link`} to={'javascript:void(0)'}>
+            {t('NFTs')}
+          </StyledNavLink>
+
+          <StyledExternalLink id={`stake-nav-link`} href={'https://snapshot.org/#/carbonpaws.eth'}>
+            DAO <span style={{ fontSize: '11px' }}></span>
+          </StyledExternalLink>
 
           {/*
           <StyledNavLink id={`stake-nav-link`} to={'/stake'} isNftPage={location.pathname === '/nft'}>
@@ -410,7 +418,7 @@ export default function Header() {
           <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
             Vote
           </StyledNavLink>
-          <StyledExternalLink id={`stake-nav-link`} href={'https://uniswap.info'}>
+          <StyledExternalLink id={`stake-nav-link`} href={'https://snapshot.org/#/carbonpaws.eth'}>
             Charts <span style={{ fontSize: '11px' }}>↗</span>
           </StyledExternalLink>
           */}

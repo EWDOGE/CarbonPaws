@@ -308,9 +308,9 @@ export default function Swap() {
       {isDesktopResolution && (
         <img
           className="d-none d-lg-block"
-          style={{ maxWidth: '80%', width: '420px', marginBottom: '60px' }}
+          style={{ maxWidth: '30%', width: '150px', marginBottom: '40px' }}
           id="logo"
-          src={require('./../../assets/images/3.png')}
+          src={require('./../../assets/images/ewd.png')}
         />
       )}
       <AppBody>

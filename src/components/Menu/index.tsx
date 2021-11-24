@@ -122,25 +122,13 @@ export default function Menu() {
             Bridge
           </MenuItem>
           */}
-          <MenuItem id="link" href="https://docs.carbonswap.exchange/">
-            <BookOpen size={14} />
-            Docs
-          </MenuItem>
-          <MenuItem id="link" href={CODE_LINK}>
-            <Code size={14} />
-            Code
-          </MenuItem>
-          <MenuItem id="link" href="https://t.me/carbonswap">
+          <MenuItem id="link" href="https://t.me/ENERGY_DOGE">
             <MessageCircle size={14} />
             Telegram
           </MenuItem>
-          <MenuItem id="link" href="https://twitter.com/carbonswap_fi">
+          <MenuItem id="link" href="https://twitter.com/energywebdoge">
             <Twitter size={14} />
             Twitter
-          </MenuItem>
-          <MenuItem id="link" href="https://info.carbonswap.exchange/">
-            <PieChart size={14} />
-            Analytics
           </MenuItem>
           {/* 
           {account && (
