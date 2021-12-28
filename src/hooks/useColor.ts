@@ -1,20 +1,21 @@
-import { useState, useLayoutEffect } from 'react'
-import { shade } from 'polished'
+import { ChainId, Token } from '../sdk'
+import { useLayoutEffect, useState } from 'react'
+
 import Vibrant from 'node-vibrant'
 import { hex } from 'wcag-contrast'
-import { Token, ChainId } from '@uniswap/sdk'
-import uriToHttp from 'utils/uriToHttp'
+import { shade } from 'polished'
+import { uriToHttp } from '../functions/convert'
 
 async function getColorFromToken(token: Token): Promise<string | null> {
   if (token.chainId === ChainId.RINKEBY && token.address === '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735') {
     return Promise.resolve('#FAAB14')
   }
 
-  const path = `https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/${token.address}.png`
+  const path = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${token.address}/logo.png`
 
   return Vibrant.from(path)
     .getPalette()
-    .then(palette => {
+    .then((palette) => {
       if (palette?.Vibrant) {
         let detectedHex = palette.Vibrant.hex
         let AAscore = hex(detectedHex, '#FFF')
@@ -34,7 +35,7 @@ async function getColorFromUriPath(uri: string): Promise<string | null> {
 
   return Vibrant.from(formattedPath)
     .getPalette()
-    .then(palette => {
+    .then((palette) => {
       if (palette?.Vibrant) {
         return palette.Vibrant.hex
       }
@@ -44,13 +45,13 @@ async function getColorFromUriPath(uri: string): Promise<string | null> {
 }
 
 export function useColor(token?: Token) {
-  const [color, setColor] = useState('#2172E5')
+  const [color, setColor] = useState('#0094ec')
 
   useLayoutEffect(() => {
     let stale = false
 
     if (token) {
-      getColorFromToken(token).then(tokenColor => {
+      getColorFromToken(token).then((tokenColor) => {
         if (!stale && tokenColor !== null) {
           setColor(tokenColor)
         }
@@ -59,7 +60,7 @@ export function useColor(token?: Token) {
 
     return () => {
       stale = true
-      setColor('#2172E5')
+      setColor('#0094ec')
     }
   }, [token])
 
@@ -67,13 +68,13 @@ export function useColor(token?: Token) {
 }
 
 export function useListColor(listImageUri?: string) {
-  const [color, setColor] = useState('#2172E5')
+  const [color, setColor] = useState('#0094ec')
 
   useLayoutEffect(() => {
     let stale = false
 
     if (listImageUri) {
-      getColorFromUriPath(listImageUri).then(color => {
+      getColorFromUriPath(listImageUri).then((color) => {
         if (!stale && color !== null) {
           setColor(color)
         }
@@ -82,7 +83,7 @@ export function useListColor(listImageUri?: string) {
 
     return () => {
       stale = true
-      setColor('#2172E5')
+      setColor('#0094ec')
     }
   }, [listImageUri])
 

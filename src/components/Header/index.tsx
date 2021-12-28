@@ -1,542 +1,187 @@
-import { ChainId, TokenAmount } from '@uniswap/sdk'
-//import { ChainId } from '@uniswap/sdk'
-import React, { useContext, useState } from 'react'
-import { Text } from 'rebass'
-import { NavLink } from 'react-router-dom'
-import { darken } from 'polished'
-import { useTranslation } from 'react-i18next'
+import { ChainId } from '../../sdk'
+import React from 'react'
 
-import styled from 'styled-components'
-
-import Logo from '../../assets/svg/logo.svg'
-import LogoDark from '../../assets/images/dogo.png'
-import { useActiveWeb3React } from '../../hooks'
-import { useDarkModeManager } from '../../state/user/hooks'
-import { useETHBalances, useSusuBalances } from '../../state/wallet/hooks'
-//import { useETHBalances } from '../../state/wallet/hooks'
-import { CardNoise } from '../earn/styled'
-import { CountUp } from 'use-count-up'
-import { TYPE, ExternalLink } from '../../theme'
-
-import { YellowCard } from '../Card'
-import { Moon, Sun } from 'react-feather'
-import Menu from '../Menu'
-
-import Row, { RowFixed } from '../Row'
+import Image from 'next/image'
+import Link from 'next/link'
+import More from './More'
+import NavLink from '../NavLink'
+import { Popover } from '@headlessui/react'
 import Web3Status from '../Web3Status'
-import ClaimModal from '../claim/ClaimModal'
-import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
-import { useUserHasAvailableClaim } from '../../state/claim/hooks'
-import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
-import { Dots } from '../swap/styleds'
-import Modal from '../Modal'
-import UniBalanceContent from './UniBalanceContent'
-import usePrevious from '../../hooks/usePrevious'
-import { Countdown, CountdownContext } from '../../components/Countdown'
+import { t } from '@lingui/macro'
+import { useActiveWeb3React } from '../../hooks/useActiveWeb3React'
+import { useLingui } from '@lingui/react'
+import TokenStats from '../TokenStats'
+import LanguageSwitch from '../LanguageSwitch'
 
-import dogologo from '../../assets/images/ewd.png'
-
-import { useLocation } from 'react-router-dom'
-
-const HeaderFrame = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 120px;
-  align-items: center;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
-  width: 100%;
-  top: 0;
-  position: relative;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  z-index: 2;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    padding: 0 1rem;
-    width: calc(100%);
-    position: relative;
-  `};
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-        padding: 0.5rem 1rem;
-  `}
-`
-
-const HeaderControls = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-self: flex-end;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    flex-direction: row;
-    justify-content: space-between;
-    justify-self: center;
-    width: 100%;
-    max-width: 960px;
-    padding: 1rem;
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    width: 100%;
-    z-index: 99;
-    height: 72px;
-    border-radius: 12px 12px 0 0;
-    background-color: ${({ theme }) => theme.bg1};
-  `};
-`
-
-const HeaderElement = styled.div`
-  display: flex;
-  align-items: center;
-
-  /* addresses safari's lack of support for "gap" */
-  & > *:not(:first-child) {
-    margin-left: 8px;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-   flex-direction: row-reverse;
-    align-items: center;
-  `};
-`
-
-const HeaderElementWrap = styled.div`
-  display: flex;
-  align-items: center;
-`
-
-const HeaderRow = styled(RowFixed)`
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-   width: 100%;
-  `};
-`
-
-const HeaderLinks = styled(Row)`
-  justify-content: center;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem 0 1rem 1rem;
-    justify-content: flex-end;
-`};
-`
-
-const AccountElement = styled.div<{ active: boolean }>`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background-color: #101010;
-  border-radius: 12px;
-  border: 1px solid #000000;
-  white-space: nowrap;
-  width: 100%;
-  cursor: pointer;
-`
-
-const UNIAmount = styled(AccountElement)`
-  color: white;
-  padding: 8px 12px;
-  font-weight: 500;
-  background-color: #080808;
-`
-
-const UNIWrapper = styled.span`
-  width: fit-content;
-  position: relative;
-  cursor: pointer;
-
-  :hover {
-    opacity: 0.8;
-  }
-
-  :active {
-    opacity: 0.9;
-  }
-`
-
-const HideSmall = styled.span`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
-`
-
-const NetworkCard = styled(YellowCard)`
-  border-radius: 12px;
-  padding: 8px 12px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 0;
-    margin-right: 0.5rem;
-    width: initial;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex-shrink: 1;
-  `};
-`
-
-const BalanceText = styled(Text)`
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
-`
-
-const Title = styled.a`
-  display: flex;
-  align-items: center;
-  pointer-events: auto;
-  justify-self: flex-start;
-  margin-right: 12px;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    justify-self: center;
-  `};
-  :hover {
-    cursor: pointer;
-  }
-`
-
-const UniIcon = styled.div`
-  width: 35px;
-  height: 35px;
-
-  :hover {
-    transform: rotate(-5deg);
-  }
-`
-
-const activeClassName = 'ACTIVE'
-
-const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
-})<{ isNftPage?: boolean }>`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme, isNftPage }) => (isNftPage ? '#ddd' : theme.text2)};
-  font-size: 1rem;
-  width: fit-content;
-  margin: 0 12px;
-  font-weight: 500;
-
-  &.${activeClassName} {
-    border-radius: 12px;
-    font-weight: 600;
-    color: ${({ theme, isNftPage }) => (isNftPage ? 'white' : theme.text1)};
-  }
-
-  :hover,
-  :focus {
-    color: ${({ theme, isNftPage }) => darken(0.1, isNftPage ? 'white' : theme.text1)};
-  }
-`
-/*
-const StyledInactiveLink = styled(NavLink).attrs({
-  activeClassName
-})`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text4};
-  font-size: 1rem;
-  width: fit-content;
-  margin: 0 12px;
-  font-weight: 500;
-  `
-*/
-
-const StyledExternalLink = styled(ExternalLink).attrs({
-  activeClassName
-})<{ isActive?: boolean; isNftPage?: boolean }>`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme, isNftPage }) => (isNftPage ? '#ddd' : theme.text2)};
-  font-size: 1rem;
-  width: fit-content;
-  margin: 0 12px;
-  font-weight: 500;
-
-  &.${activeClassName} {
-    border-radius: 12px;
-    font-weight: 600;
-    color: ${({ theme, isNftPage }) => (isNftPage ? 'white' : theme.text1)};
-  }
-
-  :hover,
-  :focus {
-    color: ${({ theme, isNftPage }) => (isNftPage ? 'white' : darken(0.1, theme.text1))};
-    text-decoration:none;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      
-`}
-`
-
-export const StyledMenuButton = styled.button`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border: none;
-  background-color: transparent;
-  margin: 0;
-  padding: 0;
-  height: 35px;
-  background-color: ${({ theme }) => theme.bg3};
-  margin-left: 8px;
-  padding: 0.15rem 0.5rem;
-  border-radius: 0.5rem;
-
-  :hover,
-  :focus {
-    cursor: pointer;
-    outline: none;
-    background-color: ${({ theme }) => theme.bg4};
-  }
-
-  svg {
-    margin-top: 2px;
-  }
-  > * {
-    stroke: ${({ theme }) => theme.text1};
-  }
-`
-
-const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.RINKEBY]: 'Rinkeby',
-  [ChainId.ROPSTEN]: 'Ropsten',
-  [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',
-  [ChainId.VOLTA]: 'Volta',
-  [ChainId.EWC]: 'EWC'
-}
-
-export default function Header() {
+function AppBar(): JSX.Element {
+  const { i18n } = useLingui()
   const { account, chainId } = useActiveWeb3React()
-  const { t } = useTranslation()
-
-  const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  const [darkMode] = useDarkModeManager()
-  //const [darkMode, toggleDarkMode] = useDarkModeManager()
-
-  const toggleClaimModal = useToggleSelfClaimModal()
-
-  const availableClaim: boolean = useUserHasAvailableClaim(account)
-
-  const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
-
-  const balances = useSusuBalances()
-
-  const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
-  const showClaimPopup = useShowClaimPopup()
-
-  const [showBiggerUniBalanceModal, setShowBiggerUniBalanceModal] = useState(false)
-
-  const countUpValue = balances['susu']?.toFixed(0) ?? '0'
-  const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
-
-  const { countdownEnded, setCountdownEnded } = useContext(CountdownContext)
-
-  const location = useLocation()
-
-  const getLogo = () => {
-    if (location.pathname === '/nft') {
-      return LogoDark
-    }
-    return darkMode ? LogoDark : Logo
-  }
 
   return (
-    <HeaderFrame>
-      <ClaimModal />
-      <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
-        <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
-      </Modal>
-      <HeaderRow>
-        <Title href=".">
-          <UniIcon>
-            <img width={'35px'} src={getLogo()} alt="logo" />
-          </UniIcon>
-        </Title>
-        <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/swap'} isNftPage={location.pathname === '/nft'}>
-            {t('swap')}
-          </StyledNavLink>
+    <header className="flex-shrink-0 w-full">
+      <Popover as="nav" className="z-10 w-full bg-transparent">
+        {({ open }) => (
+          <>
+            <div className="px-4 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="hidden sm:block sm:ml-4">
+                    <div className="flex space-x-2">
+                      <NavLink href="/exchange/swap">
+                        <a
+                          id={`swap-nav-link`}
+                          className="p-2 text-base text-primary hover:text-high-emphesis focus:text-high-emphesis whitespace-nowrap"
+                        >
+                          {i18n._(t`Swap`)}
+                        </a>
+                      </NavLink>
+                      <NavLink href="/exchange/pool">
+                        <a
+                          id={`pool-nav-link`}
+                          className="p-2 text-base text-primary hover:text-high-emphesis focus:text-high-emphesis whitespace-nowrap"
+                        >
+                          {i18n._(t`Pool`)}
+                        </a>
+                      </NavLink>
+                      <NavLink href={'/farm'}>
+                        <a
+                          id={`farm-nav-link`}
+                          className="p-2 text-base text-primary hover:text-high-emphesis focus:text-high-emphesis whitespace-nowrap"
+                        >
+                          {i18n._(t`Farm`)}
+                        </a>
+                      </NavLink>
+                      <NavLink href="https://vote.ewd.green">
+                        <a
+                          target="_blank"
+                          id={`swap-nav-link`}
+                          className="p-2 text-base text-primary hover:text-high-emphesis focus:text-high-emphesis whitespace-nowrap"
+                        >
+                          {i18n._(t`DAO`)}
+                        </a>
+                      </NavLink>
+                      <NavLink href="https://info.carbonswap.exchange">
+                        <a
+                          target="_blank"
+                          id={`swap-nav-link`}
+                          className="p-2 text-base text-primary hover:text-high-emphesis focus:text-high-emphesis whitespace-nowrap"
+                        >
+                          {i18n._(t`Analytics`)}
+                        </a>
+                      </NavLink>
+                    </div>
+                  </div>
+                </div>
 
-          <StyledNavLink
-            id={`pool-nav-link`}
-            to={'/pool'}
-            isNftPage={location.pathname === '/nft'}
-            isActive={(match, { pathname }) =>
-              Boolean(match) ||
-              pathname.startsWith('/add') ||
-              pathname.startsWith('/remove') ||
-              pathname.startsWith('/create') ||
-              pathname.startsWith('/find')
-            }
-          >
-            {t('Pool')}
-          </StyledNavLink>
+                <div className="fixed bottom-0 left-0 z-10 flex flex-row items-center justify-center w-full p-4 lg:w-auto bg-dark-1000 lg:relative lg:p-0 lg:bg-transparent">
+                  <div className="flex items-center justify-between w-full space-x-2 sm:justify-end">
+                    {chainId && [ChainId.EWC].includes(chainId) && (
+                      <div className="flex items-center hidden w-auto mr-1 text-xs font-bold rounded shadow-sm cursor-pointer pointer-events-auto select-none bg-dark-800 text-primary hover:bg-dark-700 whitespace-nowrap sm:block">
+                        <TokenStats token="EWT" />
+                      </div>
+                    )}
+                    {chainId && [ChainId.EWC].includes(chainId) && (
+                      <div className="flex items-center w-auto mr-1 text-xs font-bold rounded shadow-sm cursor-pointer pointer-events-auto select-none bg-dark-800 text-primary hover:bg-dark-700 whitespace-nowrap">
+                        <TokenStats token="EWD" />
+                      </div>
+                    )}
+                    <div className="flex items-center w-auto text-xs font-bold bg-transparent rounded shadow-sm cursor-pointer pointer-events-auto select-none text-primary hover:bg-dark-900 whitespace-nowrap">
+                      <Web3Status />
+                    </div>
+                    <div className="hidden md:block">
+                      <LanguageSwitch />
+                    </div>
+                    <More />
+                  </div>
+                </div>
+                <div className="flex flex-1 -mr-2 sm:hidden">
+                  <div className="flex-1">
+                    <Image src="/icon.png" alt="CarbonPaws" height="40px" width="40px" className="sm:hidden" />
+                  </div>
+                  <LanguageSwitch />
+                  <Popover.Button className="inline-flex items-center justify-center p-2 rounded-md text-primary hover:text-high-emphesis focus:outline-none">
+                    <span className="sr-only">{i18n._(t`Open main menu`)}</span>
+                    {open ? (
+                      <svg
+                        className="block w-6 h-6"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="block w-6 h-6"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 6h16M4 12h16M4 18h16"
+                        />
+                      </svg>
+                    )}
+                  </Popover.Button>
+                </div>
+              </div>
+            </div>
 
-          {/* ENABLE HERE */}
-          <StyledNavLink id={`farm-nav-link`} to={'javascript:void(0)'}>
-            {t('Farming')}
-          </StyledNavLink>
-
-          <StyledNavLink id={`farm-nav-link`} to={'javascript:void(0)'}>
-            {t('NFTs')}
-          </StyledNavLink>
-
-          <StyledExternalLink id={`stake-nav-link`} href={'https://snapshot.org/#/carbonpaws.eth'}>
-            DAO <span style={{ fontSize: '11px' }}></span>
-          </StyledExternalLink>
-
-          {/*
-          <StyledNavLink id={`stake-nav-link`} to={'/stake'} isNftPage={location.pathname === '/nft'}>
-            {t('Stake')}
-          </StyledNavLink> */}
-
-          {/*
-          <StyledInactiveLink id={`farm-nav-link`} to={'/farm'} onClick={e => e.preventDefault()}>
-            {t('Farm')}
-          </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/stake'}>
-            {t('Stake')}
-          </StyledNavLink>
-          {/*
-          <StyledNavLink id={`stake-nav-link`} to={'/uni'}>
-            UNI
-          </StyledNavLink>
-          
-          <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
-            Vote
-          </StyledNavLink>
-          <StyledExternalLink id={`stake-nav-link`} href={'https://snapshot.org/#/carbonpaws.eth'}>
-            Charts <span style={{ fontSize: '11px' }}>↗</span>
-          </StyledExternalLink>
-          */}
-        </HeaderLinks>
-      </HeaderRow>
-      <HeaderControls>
-        <HeaderElement>
-          <HideSmall>
-            {chainId && NETWORK_LABELS[chainId] && (
-              <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
-            )}
-          </HideSmall>
-          {availableClaim && !showClaimPopup && (
-            <UNIWrapper onClick={toggleClaimModal}>
-              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-                <TYPE.white padding="0 2px">
-                  {claimTxn && !claimTxn?.receipt ? <Dots>Claiming SUSU</Dots> : 'Claim SUSU'}
-                </TYPE.white>
-              </UNIAmount>
-              <CardNoise />
-            </UNIWrapper>
-          )}
-
-          {/* ENABLE HERE (remove false) */}
-          {!availableClaim && (
-            <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
-              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-                {account && (
-                  <HideSmall>
-                    <TYPE.white
-                      style={{
-                        paddingRight: '.4rem'
-                      }}
-                    >
-                      <CountUp
-                        key={countUpValue}
-                        isCounting
-                        start={parseFloat(countUpValuePrevious)}
-                        end={parseFloat(countUpValue)}
-                        thousandsSeparator={','}
-                        duration={1}
-                      />
-                    </TYPE.white>
-                  </HideSmall>
-                )}
-                <img style={{margin:"5px"}} width={'24px'} src={dogologo} alt="happydogo" />
-                <span>&nbsp;</span>
-                <span>&nbsp;</span>
-                <span>&nbsp;</span>
-                
-                {!showBiggerUniBalanceModal && (
-                  <>
-                    <span>&nbsp;</span>
-                    <span>&nbsp;</span>
-                  </>
-                )}
-                <Countdown
-                  startMessage={showBiggerUniBalanceModal ? '' : ''}
-                  targetSec={1630630800} //1623189600 Math.floor(Date.now()/1000) + 20
-                  radix={17}
-                  roman={false}
-                  times={28}
-                  onFinish={() => {
-                    setShowBiggerUniBalanceModal(true)
-                    if (setCountdownEnded) {
-                      setCountdownEnded(true)
-                    }
-                  }}
-                  onTick={() => {
-                    if (setCountdownEnded) {
-                      setCountdownEnded(false)
-                    }
-                  }}
-                />
-                {/*
-                <span>&nbsp;</span>
-                <span>&nbsp;</span>
-                <span>&nbsp;</span>
-                <span>&nbsp;</span>
-                <span>&nbsp;</span>
-                */}
-              </UNIAmount>
-              <CardNoise />
-            </UNIWrapper>
-          )}
-
-          {/* 
-          <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
-            <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-              <img width={'24px'} src={Steak} alt="someone-logo" />
-              <span>&nbsp;</span>
-              <Countdown
-                startMessage={showBiggerUniBalanceModal ? 'Huh?' : 'Start!'}
-                targetSec={1619647199}//1619647199
-                inMinutes={true}
-                onFinish={() => setShowBiggerUniBalanceModal(true)}
-              />
-            </UNIAmount>
-            <CardNoise />
-          </UNIWrapper>
-          */}
-
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {account && userEthBalance ? (
-              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {userEthBalance?.toSignificant(4)} EWT
-              </BalanceText>
-            ) : null}
-            <Web3Status />
-          </AccountElement>
-        </HeaderElement>
-        <HeaderElementWrap>
-          {/* <StyledMenuButton onClick={() => toggleDarkMode()}>
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-            </StyledMenuButton>*/}
-          <Menu />
-        </HeaderElementWrap>
-      </HeaderControls>
-    </HeaderFrame>
+            <Popover.Panel className="sm:hidden header-border-b">
+              <div className="flex flex-col px-4 pt-2 pb-3 space-y-1">
+                <Link href={'/exchange/swap'}>
+                  <a
+                    id={`swap-nav-link`}
+                    className="p-2 text-baseline text-primary hover:text-high-emphesis focus:text-high-emphesis md:p-3 whitespace-nowrap"
+                  >
+                    {i18n._(t`Swap`)}
+                  </a>
+                </Link>
+                <Link href={'/exchange/pool'}>
+                  <a
+                    id={`pool-nav-link`}
+                    className="p-2 text-baseline text-primary hover:text-high-emphesis focus:text-high-emphesis md:p-3 whitespace-nowrap"
+                  >
+                    {i18n._(t`Pool`)}
+                  </a>
+                </Link>
+                <Link href={'/farm'}>
+                  <a
+                    id={`farm-nav-link`}
+                    className="p-2 text-baseline text-primary hover:text-high-emphesis focus:text-high-emphesis md:p-3 whitespace-nowrap"
+                  >
+                    {i18n._(t`Farm`)}
+                  </a>
+                </Link>
+                <Link href="https://vote.ewd.green">
+                  <a
+                    target="_blank"
+                    className="p-2 text-baseline text-primary hover:text-high-emphesis focus:text-high-emphesis md:p-3 whitespace-nowrap"
+                  >
+                    {i18n._(t`DAO`)}
+                  </a>
+                </Link>
+                <Link href="https://info.carbonswap.exchange/">
+                  <a
+                    target="_blank"
+                    className="p-2 text-baseline text-primary hover:text-high-emphesis focus:text-high-emphesis md:p-3 whitespace-nowrap"
+                  >
+                    {i18n._(t`Analytics`)}
+                  </a>
+                </Link>
+              </div>
+            </Popover.Panel>
+          </>
+        )}
+      </Popover>
+    </header>
   )
 }
+
+export default AppBar

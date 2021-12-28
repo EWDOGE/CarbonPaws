@@ -1,21 +1,33 @@
-import { INITIAL_ALLOWED_SLIPPAGE, DEFAULT_DEADLINE_FROM_NOW } from '../../constants'
-import { createReducer } from '@reduxjs/toolkit'
-import { updateVersion } from '../global/actions'
 import {
+  DEFAULT_ARCHER_ETH_TIP,
+  DEFAULT_ARCHER_GAS_ESTIMATE,
+  DEFAULT_ARCHER_GAS_PRICES,
+  DEFAULT_DEADLINE_FROM_NOW,
+  INITIAL_ALLOWED_SLIPPAGE,
+} from '../../constants'
+import {
+  SerializedPair,
+  SerializedToken,
   addSerializedPair,
   addSerializedToken,
   removeSerializedPair,
   removeSerializedToken,
-  SerializedPair,
-  SerializedToken,
-  updateMatchesDarkMode,
-  updateUserDarkMode,
-  updateUserExpertMode,
-  updateUserSlippageTolerance,
-  updateUserDeadline,
   toggleURLWarning,
-  updateUserSingleHopOnly
+  updateMatchesDarkMode,
+  updateUserArcherETHTip,
+  updateUserArcherGasEstimate,
+  updateUserArcherGasPrice,
+  updateUserArcherTipManualOverride,
+  updateUserArcherUseRelay,
+  updateUserDarkMode,
+  updateUserDeadline,
+  updateUserExpertMode,
+  updateUserSingleHopOnly,
+  updateUserSlippageTolerance,
 } from './actions'
+
+import { createReducer } from '@reduxjs/toolkit'
+import { updateVersion } from '../global/actions'
 
 const currentTimestamp = () => new Date().getTime()
 
@@ -31,7 +43,7 @@ export interface UserState {
   userSingleHopOnly: boolean // only allow swaps on direct pairs
 
   // user defined slippage tolerance in bips, used in all txns
-  userSlippageTolerance: number
+  userSlippageTolerance: number | 'auto'
 
   // deadline set by user in minutes, used in all txns
   userDeadline: number
@@ -51,6 +63,12 @@ export interface UserState {
 
   timestamp: number
   URLWarningVisible: boolean
+
+  userArcherUseRelay: boolean // use relay or go directly to router
+  userArcherGasPrice: string // Current gas price
+  userArcherETHTip: string // ETH tip for relay, as full BigInt string
+  userArcherGasEstimate: string // Gas estimate for trade
+  userArcherTipManualOverride: boolean // is user manually entering tip
 }
 
 function pairKey(token0Address: string, token1Address: string) {
@@ -67,12 +85,17 @@ export const initialState: UserState = {
   tokens: {},
   pairs: {},
   timestamp: currentTimestamp(),
-  URLWarningVisible: true
+  URLWarningVisible: true,
+  userArcherUseRelay: false,
+  userArcherGasPrice: DEFAULT_ARCHER_GAS_PRICES[4].toString(),
+  userArcherETHTip: DEFAULT_ARCHER_ETH_TIP.toString(),
+  userArcherGasEstimate: DEFAULT_ARCHER_GAS_ESTIMATE.toString(),
+  userArcherTipManualOverride: false,
 }
 
-export default createReducer(initialState, builder =>
+export default createReducer(initialState, (builder) =>
   builder
-    .addCase(updateVersion, state => {
+    .addCase(updateVersion, (state) => {
       // slippage isnt being tracked in local storage, reset to default
       // noinspection SuspiciousTypeOfGuard
       if (typeof state.userSlippageTolerance !== 'number') {
@@ -139,7 +162,22 @@ export default createReducer(initialState, builder =>
       }
       state.timestamp = currentTimestamp()
     })
-    .addCase(toggleURLWarning, state => {
+    .addCase(toggleURLWarning, (state) => {
       state.URLWarningVisible = !state.URLWarningVisible
+    })
+    .addCase(updateUserArcherUseRelay, (state, action) => {
+      state.userArcherUseRelay = action.payload.userArcherUseRelay
+    })
+    .addCase(updateUserArcherGasPrice, (state, action) => {
+      state.userArcherGasPrice = action.payload.userArcherGasPrice
+    })
+    .addCase(updateUserArcherETHTip, (state, action) => {
+      state.userArcherETHTip = action.payload.userArcherETHTip
+    })
+    .addCase(updateUserArcherGasEstimate, (state, action) => {
+      state.userArcherGasEstimate = action.payload.userArcherGasEstimate
+    })
+    .addCase(updateUserArcherTipManualOverride, (state, action) => {
+      state.userArcherTipManualOverride = action.payload.userArcherTipManualOverride
     })
 )

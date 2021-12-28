@@ -1,16 +1,19 @@
-import { namehash } from 'ethers/lib/utils'
+import { isAddress, namehash } from 'ethers/lib/utils'
+import { useENSRegistrarContract, useENSResolverContract } from './useContract'
+
+import { isZero } from '../functions'
+import useDebounce from './useDebounce'
 import { useMemo } from 'react'
 import { useSingleCallResult } from '../state/multicall/hooks'
-import { isAddress } from '../utils'
-import isZero from '../utils/isZero'
-import { useENSRegistrarContract, useENSResolverContract } from './useContract'
-import useDebounce from './useDebounce'
 
 /**
  * Does a reverse lookup for an address to find its ENS name.
  * Note this is not the same as looking up an ENS name to find an address.
  */
-export default function useENSName(address?: string): { ENSName: string | null; loading: boolean } {
+export default function useENSName(address?: string): {
+  ENSName: string | null
+  loading: boolean
+} {
   const debouncedAddress = useDebounce(address, 200)
   const ensNodeArgument = useMemo(() => {
     if (!debouncedAddress || !isAddress(debouncedAddress)) return [undefined]
@@ -32,6 +35,6 @@ export default function useENSName(address?: string): { ENSName: string | null; 
   const changed = debouncedAddress !== address
   return {
     ENSName: changed ? null : name.result?.[0] ?? null,
-    loading: changed || resolverAddress.loading || name.loading
+    loading: changed || resolverAddress.loading || name.loading,
   }
 }

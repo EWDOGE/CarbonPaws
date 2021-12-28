@@ -1,11 +1,13 @@
-import { UNI } from './../../constants/index'
-import { TokenAmount, JSBI, ChainId } from '@uniswap/sdk'
-import { TransactionResponse } from '@ethersproject/providers'
+import { ChainId, Currency, CurrencyAmount, JSBI, Token } from '../../sdk'
+import { MERKLE_ROOT } from './../../constants/index'
+import { getAddress, isAddress } from '@ethersproject/address'
 import { useEffect, useState } from 'react'
-import { useActiveWeb3React } from '../../hooks'
+
+import { TransactionResponse } from '@ethersproject/providers'
+import { calculateGasMargin } from '../../functions/trade'
+import { useActiveWeb3React } from '../../hooks/useActiveWeb3React'
 import { useMerkleDistributorContract } from '../../hooks/useContract'
 import { useSingleCallResult } from '../multicall/hooks'
-import { calculateGasMargin, isAddress } from '../../utils'
 import { useTransactionAdder } from '../transactions/hooks'
 
 interface UserClaimData {
@@ -19,28 +21,26 @@ interface UserClaimData {
   }
 }
 
-const CLAIM_PROMISES: { [key: string]: Promise<UserClaimData | null> } = {}
+const CLAIM_PROMISES: { [key: string]: Promise<any | UserClaimData | null> } = {}
 
 // returns the claim for the given address, or null if not valid
-function fetchClaim(account: string, chainId: ChainId): Promise<UserClaimData | null> {
-  const formatted = isAddress(account)
-  if (!formatted) return Promise.reject(new Error('Invalid address'))
+function fetchClaim(account: string, chainId: ChainId): Promise<any | UserClaimData | null> {
+  if (!isAddress(account)) return Promise.reject(new Error('Invalid address'))
   const key = `${chainId}:${account}`
-
   return (CLAIM_PROMISES[key] =
     CLAIM_PROMISES[key] ??
-    fetch(`https://gentle-frost-9e74.uniswap.workers.dev/${chainId}/${formatted}`)
-      .then(res => {
-        if (res.status === 200) {
-          return res.json()
-        } else {
-          console.debug(`No claim for account ${formatted} on chain ID ${chainId}`)
-          return null
+    fetch(MERKLE_ROOT)
+      .then((response) => response.json())
+      .then((data) => {
+        const claim: typeof data.claims[0] | undefined = data.claims[getAddress(account)] ?? undefined
+        if (!claim) return null
+        return {
+          index: claim.index,
+          amount: claim.amount,
+          proof: claim.proof,
         }
       })
-      .catch(error => {
-        console.error('Failed to get claim data', error)
-      }))
+      .catch((error) => console.error('Failed to get claim data', error)))
 }
 
 // parse distributorContract blob and detect if user has claim data
@@ -49,15 +49,17 @@ export function useUserClaimData(account: string | null | undefined): UserClaimD
   const { chainId } = useActiveWeb3React()
 
   const key = `${chainId}:${account}`
-  const [claimInfo, setClaimInfo] = useState<{ [key: string]: UserClaimData | null }>({})
+  const [claimInfo, setClaimInfo] = useState<{
+    [key: string]: UserClaimData | null
+  }>({})
 
   useEffect(() => {
     if (!account || !chainId) return
-    fetchClaim(account, chainId).then(accountClaimInfo =>
-      setClaimInfo(claimInfo => {
+    fetchClaim(account, chainId).then((accountClaimInfo) =>
+      setClaimInfo((claimInfo) => {
         return {
           ...claimInfo,
-          [key]: accountClaimInfo
+          [key]: accountClaimInfo,
         }
       })
     )
@@ -75,22 +77,21 @@ export function useUserHasAvailableClaim(account: string | null | undefined): bo
   return Boolean(userClaimData && !isClaimedResult.loading && isClaimedResult.result?.[0] === false)
 }
 
-export function useUserUnclaimedAmount(account: string | null | undefined): TokenAmount | undefined {
+export function useUserUnclaimedAmount(account: string | null | undefined): CurrencyAmount<Currency> | undefined {
   const { chainId } = useActiveWeb3React()
   const userClaimData = useUserClaimData(account)
   const canClaim = useUserHasAvailableClaim(account)
 
-  const uni = chainId ? UNI[chainId] : undefined
-  if (!uni) return undefined
+  const sushi =  undefined
+
+  if (!sushi) return undefined
   if (!canClaim || !userClaimData) {
-    return new TokenAmount(uni, JSBI.BigInt(0))
+    return CurrencyAmount.fromRawAmount(sushi, JSBI.BigInt(0))
   }
-  return new TokenAmount(uni, JSBI.BigInt(userClaimData.amount))
+  return CurrencyAmount.fromRawAmount(sushi, JSBI.BigInt(userClaimData.amount))
 }
 
-export function useClaimCallback(
-  account: string | null | undefined
-): {
+export function useClaimCallback(account: string | null | undefined): {
   claimCallback: () => Promise<string>
 } {
   // get claim data for this account
@@ -98,22 +99,25 @@ export function useClaimCallback(
   const claimData = useUserClaimData(account)
 
   // used for popup summary
-  const unClaimedAmount: TokenAmount | undefined = useUserUnclaimedAmount(account)
+  const unClaimedAmount: CurrencyAmount<Currency> | undefined = useUserUnclaimedAmount(account)
   const addTransaction = useTransactionAdder()
   const distributorContract = useMerkleDistributorContract()
 
-  const claimCallback = async function() {
+  const claimCallback = async function () {
     if (!claimData || !account || !library || !chainId || !distributorContract) return
 
     const args = [claimData.index, account, claimData.amount, claimData.proof]
 
-    return distributorContract.estimateGas['claim'](...args, {}).then(estimatedGasLimit => {
+    return distributorContract.estimateGas['claim'](...args, {}).then((estimatedGasLimit) => {
       return distributorContract
-        .claim(...args, { value: null, gasLimit: calculateGasMargin(estimatedGasLimit) })
+        .claim(...args, {
+          value: null,
+          gasLimit: calculateGasMargin(estimatedGasLimit),
+        })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Claimed ${unClaimedAmount?.toSignificant(4)} UNI`,
-            claim: { recipient: account }
+            summary: `Claimed ${unClaimedAmount?.toSignificant(4)} SUSHI`,
+            claim: { recipient: account },
           })
           return response.hash
         })

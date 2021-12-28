@@ -1,12 +1,18 @@
-import React, { useState, useEffect } from 'react'
-import { useWeb3React } from '@web3-react/core'
-import styled from 'styled-components'
-import { useTranslation } from 'react-i18next'
-
-import { network } from '../../connectors'
-import { useEagerConnect, useInactiveListener } from '../../hooks'
-import { NetworkContextName } from '../../constants'
+import React, { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import Loader from '../Loader'
+import { NetworkContextName } from '../../constants'
+import { network } from '../../connectors'
+import styled from 'styled-components'
+import { t } from '@lingui/macro'
+import useEagerConnect from '../../hooks/useEagerConnect'
+import useInactiveListener from '../../hooks/useInactiveListener'
+import { useLingui } from '@lingui/react'
+import { useWeb3React } from '@web3-react/core'
+import { useActiveWeb3React } from '../../hooks'
+import { SUPPORTED_NETWORKS } from '../../modals/NetworkModal'
+import { ChainId } from '../../sdk'
+import { useRouter } from 'next/router'
 
 const MessageWrapper = styled.div`
   display: flex;
@@ -15,17 +21,61 @@ const MessageWrapper = styled.div`
   height: 20rem;
 `
 
-const Message = styled.h2`
-  color: ${({ theme }) => theme.secondary1};
-`
+const Message = styled.h2``
+
+const GnosisManagerNoSSR = dynamic(() => import('./GnosisManager'), {
+  ssr: false,
+})
 
 export default function Web3ReactManager({ children }: { children: JSX.Element }) {
-  const { t } = useTranslation()
+  const { i18n } = useLingui()
   const { active } = useWeb3React()
-  const { active: networkActive, error: networkError, activate: activateNetwork } = useWeb3React(NetworkContextName)
+  const router = useRouter()
+  const {
+    active: networkActive,
+    error: networkError,
+    activate: activateNetwork,
+    chainId: currentChain,
+  } = useWeb3React(NetworkContextName)
+  const { account, chainId, library } = useActiveWeb3React()
+  const [wrongNetwork, setWrongNetwork] = useState(false)
+
+  // useEffect(() => {
+  //   console.debug({
+  //     chainId,
+  //     route: router.route
+  //   })
+
+  //   if (router.route !== '/bridge' && chainId !== ChainId.EWC) {
+  //     setWrongNetwork(true)
+  //   } else {
+  //     setWrongNetwork(false)
+  //   }
+  // }, [active, chainId, router, router.route])
 
   // try to eagerly connect to an injected provider, if it exists and has granted access already
   const triedEager = useEagerConnect()
+
+  useEffect(() => {
+    if (window && window.ethereum && router.route !== '/bridge' && router.route !== '/bridge/history') {
+      const provider: any = window.ethereum
+      const params = SUPPORTED_NETWORKS[ChainId.EWC]
+
+      if (provider) {
+        try {
+          provider
+            .request({
+              method: 'wallet_addEthereumChain',
+              params: [params],
+            })
+            .then((r) => {})
+        } catch (error) {
+          console.error('Failed to setup the network in Metamask:', error)
+        }
+      }
+    } else {
+    }
+  }, [])
 
   // after eagerly trying injected, if the network connect ever isn't active or in an error state, activate itd
   useEffect(() => {
@@ -58,7 +108,9 @@ export default function Web3ReactManager({ children }: { children: JSX.Element }
   if (!active && networkError) {
     return (
       <MessageWrapper>
-        <Message>{t('unknownError')}</Message>
+        <div className="text-secondary">
+          {i18n._(t`Oops! An unknown error occurred. Please refresh the page, or visit from another browser or device`)}
+        </div>
       </MessageWrapper>
     )
   }
@@ -72,5 +124,20 @@ export default function Web3ReactManager({ children }: { children: JSX.Element }
     ) : null
   }
 
-  return children
+  if (wrongNetwork) {
+    return (
+      <h1 className="text-center">
+        {`Looks like you're using an unsupported network.`}
+        <br />
+        {`Switch to EnergyWeb Network to use CarbonPaws.io.`}
+      </h1>
+    )
+  }
+
+  return (
+    <>
+      <GnosisManagerNoSSR />
+      {children}
+    </>
+  )
 }

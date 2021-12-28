@@ -1,3 +1,6 @@
-# CarbonPaws Interface
+# CarbonPaws.io
+CarbonPaws DEX on EnergyWeb
 
-TODO
+### Whitelisting
+
+Whitelisting requests are submited under [carbonpaws-tokenlist](https://github.com/carbonpawsio/carbonpaws-tokenlist) repository.

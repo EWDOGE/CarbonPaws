@@ -1,34 +1,43 @@
-import React, { useState } from 'react'
-import { HelpCircle } from 'react-feather'
-import { ImageProps } from 'rebass'
+import { IconProps } from 'react-feather'
+import React, { FC, useState } from 'react'
+
+import Image from '../Image'
+import { classNames } from '../../functions'
 
 const BAD_SRCS: { [tokenAddress: string]: true } = {}
 
-export interface LogoProps extends Pick<ImageProps, 'style' | 'alt' | 'className'> {
+export type LogoProps = {
   srcs: string[]
-}
+  width: string | number
+  height: string | number
+  alt?: string
+} & IconProps
 
 /**
  * Renders an image by sequentially trying a list of URIs, and then eventually a fallback triangle alert
  */
-export default function Logo({ srcs, alt, ...rest }: LogoProps) {
+const Logo: FC<LogoProps> = ({ srcs, width, height, style, alt = '', className, ...rest }) => {
   const [, refresh] = useState<number>(0)
-
-  const src: string | undefined = srcs.find(src => !BAD_SRCS[src])
-
-  if (src) {
-    return (
-      <img
-        {...rest}
+  let src = srcs.find((src) => !BAD_SRCS[src])
+  src = alt == 'EWD' ? '/images/tokens/0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891.png' : src
+  return (
+    <div className="rounded" style={{ width, height }}>
+      <Image
+        src={src || 'https://raw.githubusercontent.com/sushiswap/icons/master/token/unknown.png'}
+        width={width}
+        height={height}
         alt={alt}
-        src={src}
         onError={() => {
           if (src) BAD_SRCS[src] = true
-          refresh(i => i + 1)
+          refresh((i) => i + 1)
         }}
+        layout="fixed"
+        className={classNames('rounded', className)}
+        quality={50}
+        {...rest}
       />
-    )
-  }
-
-  return <HelpCircle {...rest} />
+    </div>
+  )
 }
+
+export default Logo

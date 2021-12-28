@@ -1,15 +1,16 @@
-import React, { useContext } from 'react'
-import { useActiveWeb3React } from '../../hooks'
-
 import { AutoColumn, ColumnCenter } from '../Column'
+import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
-import { RowBetween } from '../Row'
-import { TYPE, CloseIcon, CustomLightSpinner } from '../../theme'
-import { ArrowUpCircle } from 'react-feather'
+import { t } from '@lingui/macro'
+import { useLingui } from '@lingui/react'
 
-import Circle from '../../assets/images/blue-loader.svg'
-import { getExplorerLink } from '../../utils'
-import { ExternalLink } from '../../theme/components'
+import { ArrowUpCircle } from 'react-feather'
+import CloseIcon from '../CloseIcon'
+import { CustomLightSpinner } from '../Spinner'
+import ExternalLink from '../ExternalLink'
+import { RowBetween } from '../Row'
+import { getExplorerLink } from '../../functions/explorer'
+import { useActiveWeb3React } from '../../hooks/useActiveWeb3React'
 
 const ConfirmOrLoadingWrapper = styled.div`
   width: 100%;
@@ -21,6 +22,7 @@ const ConfirmedIcon = styled(ColumnCenter)`
 `
 
 export function LoadingView({ children, onDismiss }: { children: any; onDismiss: () => void }) {
+  const { i18n } = useLingui()
   return (
     <ConfirmOrLoadingWrapper>
       <RowBetween>
@@ -28,11 +30,11 @@ export function LoadingView({ children, onDismiss }: { children: any; onDismiss:
         <CloseIcon onClick={onDismiss} />
       </RowBetween>
       <ConfirmedIcon>
-        <CustomLightSpinner src={Circle} alt="loader" size={'90px'} />
+        <CustomLightSpinner src="/blue-loader.svg" alt="loader" size={'90px'} />
       </ConfirmedIcon>
       <AutoColumn gap="100px" justify={'center'}>
         {children}
-        <TYPE.subHeader>Confirm this transaction in your wallet</TYPE.subHeader>
+        <div>{i18n._(t`Confirm this transaction in your wallet`)}</div>
       </AutoColumn>
     </ConfirmOrLoadingWrapper>
   )
@@ -41,7 +43,7 @@ export function LoadingView({ children, onDismiss }: { children: any; onDismiss:
 export function SubmittedView({
   children,
   onDismiss,
-  hash
+  hash,
 }: {
   children: any
   onDismiss: () => void
@@ -49,6 +51,7 @@ export function SubmittedView({
 }) {
   const theme = useContext(ThemeContext)
   const { chainId } = useActiveWeb3React()
+  const { i18n } = useLingui()
 
   return (
     <ConfirmOrLoadingWrapper>
@@ -57,13 +60,13 @@ export function SubmittedView({
         <CloseIcon onClick={onDismiss} />
       </RowBetween>
       <ConfirmedIcon>
-        <ArrowUpCircle strokeWidth={0.5} size={90} color={theme.primary1} />
+        <ArrowUpCircle strokeWidth={0.5} size={90} color="currentColor" />
       </ConfirmedIcon>
       <AutoColumn gap="100px" justify={'center'}>
         {children}
         {chainId && hash && (
           <ExternalLink href={getExplorerLink(chainId, hash, 'transaction')} style={{ marginLeft: '4px' }}>
-            <TYPE.subHeader>View transaction on Explorer</TYPE.subHeader>
+            <div>{i18n._(t`View transaction on explorer`)}</div>
           </ExternalLink>
         )}
       </AutoColumn>

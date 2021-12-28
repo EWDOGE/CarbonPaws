@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useActiveWeb3React } from '../../hooks'
+import { useActiveWeb3React } from '../../hooks/useActiveWeb3React'
 import { AppDispatch, AppState } from '../index'
 import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from './actions'
 
@@ -33,6 +33,22 @@ export function useCloseModals(): () => void {
 
 export function useWalletModalToggle(): () => void {
   return useToggleModal(ApplicationModal.WALLET)
+}
+
+export function useTokenStatsModalToggle(token): () => void {
+  return useToggleModal(token.symbol == 'EWD' ? ApplicationModal.EWD_STATS : ApplicationModal.EWT_STATS)
+}
+
+export function useYieldDetailsModalToggle(): () => void {
+  return useToggleModal(ApplicationModal.YIELD_DETAILS)
+}
+
+export function useChainModalToggle(): () => void {
+  return useToggleModal(ApplicationModal.CHAIN)
+}
+
+export function useNetworkModalToggle(): () => void {
+  return useToggleModal(ApplicationModal.NETWORK)
 }
 
 export function useToggleSettingsMenu(): () => void {
@@ -85,5 +101,9 @@ export function useRemovePopup(): (key: string) => void {
 // get the list of active popups
 export function useActivePopups(): AppState['application']['popupList'] {
   const list = useSelector((state: AppState) => state.application.popupList)
-  return useMemo(() => list.filter(item => item.show), [list])
+  return useMemo(() => list.filter((item) => item.show), [list])
+}
+
+export function useKashiApprovalPending(): string {
+  return useSelector((state: AppState) => state.application.kashiApprovalPending)
 }

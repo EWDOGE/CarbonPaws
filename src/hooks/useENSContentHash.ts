@@ -1,13 +1,17 @@
+import { useENSRegistrarContract, useENSResolverContract } from './useContract'
+
+import { isZero } from '../functions'
 import { namehash } from 'ethers/lib/utils'
 import { useMemo } from 'react'
 import { useSingleCallResult } from '../state/multicall/hooks'
-import isZero from '../utils/isZero'
-import { useENSRegistrarContract, useENSResolverContract } from './useContract'
 
 /**
  * Does a lookup for an ENS name to find its contenthash.
  */
-export default function useENSContentHash(ensName?: string | null): { loading: boolean; contenthash: string | null } {
+export default function useENSContentHash(ensName?: string | null): {
+  loading: boolean
+  contenthash: string | null
+} {
   const ensNodeArgument = useMemo(() => {
     if (!ensName) return [undefined]
     try {
@@ -27,6 +31,6 @@ export default function useENSContentHash(ensName?: string | null): { loading: b
 
   return {
     contenthash: contenthash.result?.[0] ?? null,
-    loading: resolverAddressResult.loading || contenthash.loading
+    loading: resolverAddressResult.loading || contenthash.loading,
   }
 }

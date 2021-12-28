@@ -1,5 +1,6 @@
-import { useActiveWeb3React } from '.'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+
+import { useActiveWeb3React } from './useActiveWeb3React'
 
 export function useTimestampFromBlock(block: number | undefined): number | undefined {
   const { library } = useActiveWeb3React()

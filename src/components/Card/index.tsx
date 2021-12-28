@@ -1,66 +1,44 @@
 import React from 'react'
-import styled from 'styled-components'
-import { CardProps, Text } from 'rebass'
-import { Box } from 'rebass/styled-components'
 
-const Card = styled(Box)<{ width?: string; padding?: string; border?: string; borderRadius?: string }>`
-  width: ${({ width }) => width ?? '100%'};
-  border-radius: 16px;
-  padding: 1.25rem;
-  padding: ${({ padding }) => padding};
-  border: ${({ border }) => border};
-  border-radius: ${({ borderRadius }) => borderRadius};
-`
-export default Card
+type CardProps = {
+  header?: React.ReactChild
+  footer?: React.ReactChild
+  backgroundImage?: string
+  title?: string
+  description?: string
+  removePadding?: boolean
+} & React.HTMLAttributes<HTMLDivElement>
 
-export const LightCard = styled(Card)`
-  border: 1px solid ${({ theme }) => theme.bg2};
-  background-color: ${({ theme }) => theme.bg1};
-`
-
-export const LightGreyCard = styled(Card)`
-  background-color: ${({ theme }) => theme.bg2};
-`
-
-export const GreyCard = styled(Card)`
-padding-top: 16px;
-padding-bottom: 16px;
-width: 100%;
-background-color: #0b1e0b;
-z-index: -1;
-transition: transform 300ms ease-in-out;
-border-radius: 0px;
-`
-
-export const OutlineCard = styled(Card)`
-  border: 1px solid ${({ theme }) => theme.bg3};
-`
-
-export const YellowCard = styled(Card)`
-  background-color: rgba(243, 132, 30, 0.05);
-  color: ${({ theme }) => theme.yellow2};
-  font-weight: 500;
-`
-
-export const PinkCard = styled(Card)`
-  background-color: rgba(255, 0, 122, 0.03);
-  color: ${({ theme }) => theme.primary1};
-  font-weight: 500;
-`
-
-const BlueCardStyled = styled(Card)`
-  background-color: ${({ theme }) => theme.primary5};
-  color: ${({ theme }) => theme.primary1};
-  border-radius: 12px;
-  width: fit-content;
-`
-
-export const BlueCard = ({ children, ...rest }: CardProps) => {
+export default function Card({
+  header = undefined,
+  footer = undefined,
+  backgroundImage = '',
+  title = '',
+  description = '',
+  removePadding = false,
+  children,
+  className,
+}: CardProps) {
   return (
-    <BlueCardStyled {...rest}>
-      <Text fontWeight={500} color="#2172E5">
+    <div
+      className={`relative ${className}`}
+      style={{
+        borderRadius: '10px',
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'contain',
+        backgroundPosition: 'center bottom',
+      }}
+    >
+      {header && <>{header}</>}
+
+      <div className={!removePadding && 'px-2 py-4 sm:p-8'}>
+        {title && <div className="mb-4 text-2xl text-high-emphesis">{title}</div>}
+        {description && <div className="text-base text-secondary">{description}</div>}
         {children}
-      </Text>
-    </BlueCardStyled>
+      </div>
+
+      {footer && <>{footer}</>}
+    </div>
   )
 }

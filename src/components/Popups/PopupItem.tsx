@@ -1,55 +1,43 @@
-import React, { useCallback, useContext, useEffect } from 'react'
-import { X } from 'react-feather'
-import { useSpring } from 'react-spring/web'
-import styled, { ThemeContext } from 'styled-components'
-import { animated } from 'react-spring'
+import { useCallback, useEffect } from 'react'
+
 import { PopupContent } from '../../state/application/actions'
-import { useRemovePopup } from '../../state/application/hooks'
-import ListUpdatePopup from './ListUpdatePopup'
 import TransactionPopup from './TransactionPopup'
+import { XIcon } from '@heroicons/react/outline'
+import { animated, useSpring } from 'react-spring'
+import styled from 'styled-components'
+import { useRemovePopup } from '../../state/application/hooks'
 
-export const StyledClose = styled(X)`
-  position: absolute;
-  right: 10px;
-  top: 10px;
-
-  :hover {
-    cursor: pointer;
-  }
-`
 export const Popup = styled.div`
   display: inline-block;
   width: 100%;
   padding: 1em;
-  background-color: ${({ theme }) => theme.bg1};
+  // background-color: ${({ theme }) => theme.bg1};
   position: relative;
   border-radius: 10px;
   padding: 20px;
   padding-right: 35px;
   overflow: hidden;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  // ${({ theme }) => theme.mediaWidth.upToSmall`
     min-width: 290px;
     &:not(:last-of-type) {
       margin-right: 20px;
     }
   `}
 `
-const Fader = styled.div`
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-  width: 100%;
-  height: 2px;
-  background-color: ${({ theme }) => theme.bg3};
-`
 
-const AnimatedFader = animated(Fader)
+const AnimatedFader = animated(({ children, ...rest }) => (
+  <div className="h-[3px] bg-dark-800 w-full">
+    <div className="h-[3px] bg-gradient-to-r from-yellow to-yellow " {...rest}>
+      {children}
+    </div>
+  </div>
+))
 
 export default function PopupItem({
   removeAfterMs,
   content,
-  popKey
+  popKey,
 }: {
   removeAfterMs: number | null
   content: PopupContent
@@ -69,32 +57,31 @@ export default function PopupItem({
     }
   }, [removeAfterMs, removeThisPopup])
 
-  const theme = useContext(ThemeContext)
-
   let popupContent
   if ('txn' in content) {
     const {
-      txn: { hash, success, summary }
+      txn: { hash, success, summary },
     } = content
     popupContent = <TransactionPopup hash={hash} success={success} summary={summary} />
-  } else if ('listUpdate' in content) {
-    const {
-      listUpdate: { listUrl, oldList, newList, auto }
-    } = content
-    popupContent = <ListUpdatePopup popKey={popKey} listUrl={listUrl} oldList={oldList} newList={newList} auto={auto} />
   }
 
   const faderStyle = useSpring({
     from: { width: '100%' },
     to: { width: '0%' },
-    config: { duration: removeAfterMs ?? undefined }
+    config: { duration: removeAfterMs ?? undefined },
   })
 
   return (
-    <Popup>
-      <StyledClose color={theme.text2} onClick={removeThisPopup} />
-      {popupContent}
-      {removeAfterMs !== null ? <AnimatedFader style={faderStyle} /> : null}
-    </Popup>
+    <div className="mb-4">
+      <div className="w-full relative rounded overflow-hidden bg-dark-700">
+        <div className="flex flex-row p-4">
+          {popupContent}
+          <div className="hover:text-white cursor-pointer">
+            <XIcon width={24} height={24} onClick={removeThisPopup} />
+          </div>
+        </div>
+        {removeAfterMs !== null ? <AnimatedFader style={faderStyle} /> : null}
+      </div>
+    </div>
   )
 }

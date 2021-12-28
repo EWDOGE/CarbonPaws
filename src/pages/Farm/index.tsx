@@ -1,367 +1,267 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
-import { RowBetween } from '../../components/Row'
-import { Dots } from '../Pool/styleds'
+/* eslint-disable @next/next/link-passhref */
+import { useActiveWeb3React, useFuse } from '../../hooks'
 
-//import { useActiveWeb3React } from 'hooks'
-import { formatBalance, formattedNum, toEth /*formattedPercent*/ } from '../../utils/sushi'
-import { Card, CardHeader, Paper, Search, DoubleLogo } from './components'
-import useFuse from '../../hooks/carbonswap/useFuse'
-import useSortableData from '../../hooks/carbonswap/useSortableData'
-import useFarms from '../../hooks/carbonswap/useFarms'
+import FarmList from '../../features/farm/FarmList'
+import Head from 'next/head'
+import Menu from '../../features/farm/FarmMenu'
+import React, { useContext, useState } from 'react'
+import { formatNumberScale } from '../../functions'
+import { usePositions, useFarms, useDistributorInfo } from '../../features/farm/hooks'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+import Card from '../../components/Card'
+import Button from '../../components/Button'
+import { t } from '@lingui/macro'
+import { useLingui } from '@lingui/react'
+import DoubleGlowShadow from '../../components/DoubleGlowShadow'
+import { EWD_ADDRESS, AVERAGE_BLOCK_TIME, WNATIVE } from '../../constants'
+import { POOLS } from '../../constants/farms'
+import CarbonPawsLogo from '../../components/CarbonPawsLogo'
+import { PriceContext } from '../../contexts/priceContext'
+import useMasterChef from '../../features/farm/useMasterChef'
+import { useTransactionAdder } from '../../state/transactions/hooks'
+import { useTVL } from '../../hooks/useV2Pairs'
+import { getAddress } from '@ethersproject/address'
+import { useVaults } from '../../features/vault/hooks'
+import Search from '../../components/Search'
 
-import { ChevronUp, ChevronDown, ExternalLink } from 'react-feather'
-import InputGroup from './InputGroup'
-import { CardBGImage, CardNoise, CardSection, DataCard, Poolz } from '../../components/earn/styled'
-import { AutoColumn } from '../../components/Column'
-import { TYPE } from 'theme'
-import { LightCard } from '../../components/Card'
-import { transparentize } from 'polished'
-import { useColor } from '../../hooks/useColor'
-import { ChainId, Token, TokenAmount } from '@uniswap/sdk'
-import { useWeb3React } from '@web3-react/core'
-import { ethers } from 'ethers'
-import usePendingRewards from 'hooks/carbonswap/usePendingRewards'
-import { Countdown } from 'components/Countdown'
-import { useMatchMedia } from '../../theme/useMatchMedia'
+export default function Farm(): JSX.Element {
+  const { i18n } = useLingui()
+  const router = useRouter()
+  const { chainId } = useActiveWeb3React()
+  const [pendingTx, setPendingTx] = useState(false)
+  const addTransaction = useTransactionAdder()
 
-export const FixedHeightRow = styled(RowBetween)`
-  height: 24px;
-`
+  const type = router.query.filter as string
 
-export const PrimaryColoredDiv = styled.div`
-  background: ${({ theme }) => theme.primary3};
-`
+  const positions = usePositions()
 
-export const SecondaryColoredDiv = styled.div`
-  background: ${({ theme }) => theme.secondary2};
-`
-const TopSection = styled(AutoColumn)`
-  max-width: 720px;
-  width: 100%;
-`
-const PageWrapper = styled(AutoColumn)`
-  max-width: 640px;
-  width: 100%;
-`
+  const farms = useFarms()
+  const vaults = useVaults()
 
-export const CardSection2 = styled(AutoColumn)<{ disabled?: boolean }>`
-  padding: 1rem;
-  z-index: 1;
-  opacity: ${({ disabled }) => disabled && '0.4'};
-`
+  const distributorInfo = useDistributorInfo()
 
-export default function BentoBalances(): JSX.Element {
-  const query = useFarms()
+  const priceData = useContext(PriceContext)
 
-  //console.log('yolo' , query)
+  const ewdPrice = priceData?.['ewd']/100
+  const ewtPrice = priceData?.['ewt']
 
-  const farms = query?.farms
-  const userFarms = query?.userFarms
+  const tvlInfo = useTVL()
 
-  // Search Setup
-  const options = { keys: ['symbol', 'name', 'lpToken'], threshold: 0.4 }
-  const { result, search, term } = useFuse({
-    data: farms && farms.length > 0 ? farms : [],
-    options
+  const farmingPools = Object.keys(POOLS[chainId]).map((key) => {
+    return { ...POOLS[chainId][key], lpToken: key }
   })
-  const flattenSearchResults = result.map((a: { item: any }) => (a.item ? a.item : a))
-  // Sorting Setup
-  const { items, requestSort, sortConfig } = useSortableData(flattenSearchResults)
 
-  //let items: any[] = []
+  let summTvl = tvlInfo.reduce((previousValue, currentValue) => {
+    return previousValue + currentValue.tvl
+  }, 0)
 
-  const BackGroundInput = styled.input`
-    background: ${({ theme }) => theme.primary5};
-    color: ${({ theme }) => theme.text1};
-    border-radius: 12px;
-  `
+  let summTvlVaults = vaults.reduce((previousValue, currentValue) => {
+    return previousValue + (currentValue.totalLp / 1e18) * ewdPrice
+  }, 0)
 
-  const isDesktopResolution = useMatchMedia('(min-width:640px)', true)
+  const blocksPerDay = 86400 / Number(AVERAGE_BLOCK_TIME[chainId])
 
-  console.log('userFarms:', userFarms)
-  return (
-    <div
-      style={{ marginLeft: 'auto', marginRight: 'auto', maxWidth: '640px', width: '100%' }}
-      className="container max-w-2xl mx-auto px-0 sm:px-4"
-    >
-      {isDesktopResolution && (
-        <img
-          className="d-none d-lg-block"
-          style={{
-            maxWidth: '80%',
-            width: '420px',
-            marginBottom: '100px',
-            textAlign: 'center',
-            marginLeft: 'auto',
-            marginRight: 'auto'
-          }}
-          id="logo"
-          src={require('./../../assets/images/3.png')}
-        />
-      )}
-      <Poolz>
-        <DataCard>
-          <CardBGImage />
-          <CardNoise />
-          <CardSection2>
-            <AutoColumn gap="md">
-              <RowBetween>
-                <TYPE.white fontWeight={600}>CarbonSwap liquidity mining</TYPE.white>
-              </RowBetween>
-              <RowBetween>
-                <TYPE.white fontSize={14}>
-                  Deposit your CarbonSwap Liquidity Provider tokens (CLP) to receive SUSU, the CarbonSwap protocol
-                  governance token. Activates at #11443127
-                </TYPE.white>
-              </RowBetween>{' '}
-              {/*
-              <ExternalLink
-                style={{ color: 'white', textDecoration: 'underline' }}
-                href="https://x.carbonswap.exchange"
-                target="_blank"
-              >
-                <TYPE.white fontSize={14}>Read more about SUSU</TYPE.white>
-              </ExternalLink>
-               */}
-            </AutoColumn>
-          </CardSection2>
-          <CardBGImage />
-          <CardNoise />
-        </DataCard>
-        <Card
-          className="h-full"
-          header={
-            <CardHeader className="flex justify-between items-center">
-              <div className="flex w-full justify-between">
-                <Search search={search} term={term} />
-              </div>
-            </CardHeader>
-          }
-        >
-          {/* UserFarms */}
+  const map = (pool) => {
+    pool.owner = 'CarbonPaws'
+    pool.balance = 0
 
-          {userFarms && userFarms.length > 0 && (
-            <>
-              <div className="pb-4">
-                <div className="grid grid-cols-3 pb-4 px-4 text-sm text-secondary">
-                  <div className="flex items-center">
-                    <div>Your Yields</div>
-                  </div>
-                  <div className="flex items-center justify-end">
-                    <div>Deposited</div>
-                  </div>
-                  <div className="flex items-center justify-end">
-                    <div>Claimable</div>
-                  </div>
-                </div>
-                <div className="flex-col space-y-2">
-                  {userFarms.map((farmInner: any, i: number) => {
-                    return <UserBalance key={farmInner.lpToken + '_' + i} farm={farmInner} />
-                  })}
-                </div>
-              </div>
-            </>
-          )}
-          {/* */}
-          {/* All Farms */}
+    const pair = POOLS[chainId][pool.lpToken]
 
-          <div className="grid grid-cols-3 pb-4 px-4 text-sm text-secondary">
-            <div
-              className="flex items-center cursor-pointer hover:text-secondary"
-              onClick={() => requestSort('symbol')}
-            >
-              <div>Lure</div>
-              {sortConfig &&
-                sortConfig.key === 'symbol' &&
-                ((sortConfig.direction === 'ascending' && <ChevronUp size={12} />) ||
-                  (sortConfig.direction === 'descending' && <ChevronDown size={12} />))}
-            </div>
-            <div className="hover:text-secondary cursor-pointer" onClick={() => requestSort('tvl')}>
-              <div className="flex items-center justify-end">
-                <div>Pool size</div>
-                {sortConfig &&
-                  sortConfig.key === 'tvl' &&
-                  ((sortConfig.direction === 'ascending' && <ChevronUp size={12} />) ||
-                    (sortConfig.direction === 'descending' && <ChevronDown size={12} />))}
-              </div>
-            </div>
+    const blocksPerHour = 3600 / AVERAGE_BLOCK_TIME[chainId]
 
-            <div className="hover:text-secondary cursor-pointer" onClick={() => requestSort('yield')}>
-              <div className="flex items-center justify-end">
-                <div>Yield (SUSU/day)</div>
-                {sortConfig &&
-                  sortConfig.key === 'yield' &&
-                  ((sortConfig.direction === 'ascending' && <ChevronUp size={12} />) ||
-                    (sortConfig.direction === 'descending' && <ChevronDown size={12} />))}
-              </div>
-            </div>
-            {/**/}
-          </div>
+    function getRewards() {
+      const rewardPerBlock =
+        ((pool.allocPoint / distributorInfo.totalAllocPoint) * distributorInfo.rewardPerBlock) / 1e18
 
-          <div className="flex-col space-y-2">
-            {items && items.length > 0 ? (
-              items.map((farmInner: any, i: number) => {
-                return <TokenBalance key={farmInner.lpToken + '_' + i} farm={farmInner} />
-              })
-            ) : (
-              <>
-                {term ? (
-                  <div className="w-full text-center py-6">No Results.</div>
-                ) : (
-                  <div className="w-full text-center py-6">
-                    <Dots>Fetching SUSU lures</Dots>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </Card>
-      </Poolz>
-    </div>
-  )
-}
+      const defaultReward = {
+        token: 'EWD',
+        icon: '/images/token/0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891.png',
+        rewardPerBlock,
+        rewardPerDay: rewardPerBlock * blocksPerDay,
+        rewardPrice: ewdPrice,
+      }
 
-const clpDecimals = (lpToken: string): number => {
-  //ren-ewt
-  if ('0xdF43600a2d27f7d5a8481189ad56317451e8D5c0' === lpToken) {
-    return 5
+      const defaultRewards = [defaultReward]
+
+      return defaultRewards
+    }
+
+    //Fix this asap later
+    function getTvl(pool) {
+      let lpPrice = 0
+      let decimals = 18
+      if (pool.lpToken == EWD_ADDRESS[chainId]) {
+        lpPrice = ewdPrice
+        decimals = pair.token0?.decimals
+      } else if (pool.lpToken.toLowerCase() == WNATIVE[chainId].toLowerCase()) {
+        lpPrice = ewtPrice
+      } else {
+        lpPrice = 0
+      }
+
+      return Number(pool.totalLp / 10 ** decimals) * lpPrice
+    }
+
+    const rewards = getRewards()
+
+    const tvl = getTvl(pool)
+
+    const roiPerBlock =
+      rewards.reduce((previousValue, currentValue) => {
+        return previousValue + currentValue.rewardPerBlock * currentValue.rewardPrice
+      }, 0) / tvl
+
+    const roiPerHour = roiPerBlock * blocksPerHour
+    const roiPerDay = roiPerHour * 24
+    const roiPerMonth = roiPerDay * 30
+    const roiPerYear = roiPerDay * 365
+
+    const position = positions.find((position) => position.id === pool.id)
+
+    return {
+      ...pool,
+      ...position,
+      pair: {
+        ...pair,
+        decimals: 18,
+      },
+      roiPerBlock,
+      roiPerHour,
+      roiPerDay,
+      roiPerMonth,
+      roiPerYear,
+      rewards,
+      tvl,
+      blocksPerHour,
+    }
   }
 
-  //ewt-usdc
-  if ('0x5Cec0CcC21D2EB89a0613f6cA4b19b07c75909B0' === lpToken) {
-    return 5
+  const FILTER = {
+    my: (farm) => farm?.amount && !farm.amount.isZero(),
+    ewd: (farm) => farm.pair.token0?.id == EWD_ADDRESS[chainId] || farm.pair.token1?.id == EWD_ADDRESS[chainId],
+    single: (farm) => !farm.pair.token1,
+    ewc: (farm) => farm.pair.token0?.id == WNATIVE[chainId] || farm.pair.token1?.id == WNATIVE[chainId],
+    stables: (farm) =>
+      farm.pair.token0?.symbol == 'USDC' ||
+      farm.pair.token1?.symbol == 'USDC' ||
+      farm.pair.token0?.symbol == 'DAI' ||
+      farm.pair.token1?.symbol == 'DAI',
   }
 
-  return 1
-}
+  const data = farms.map(map).filter((farm) => {
+    return type in FILTER ? FILTER[type](farm) : true
+  })
 
-const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
-  border: none;
-  background: ${({ theme, bgColor }) =>
-    `radial-gradient(91.85% 100% at 1.84% 0%, ${transparentize(0.8, bgColor)} 0%, ${theme.bg3} 100%) `};
-  position: relative;
-  overflow: hidden;
-`
+  const options = {
+    keys: ['pair.id', 'pair.token0.symbol', 'pair.token1.symbol', 'pair.token0.name', 'pair.token1.name'],
+    threshold: 0.4,
+  }
 
-const TokenBalance = ({ farm }: any) => {
-  const [expand, setExpand] = useState<boolean>(false)
-  //const backgroundColor = getColorFromToken(new Token(chainId ?? ChainId.VOLTA, farm.lpToken0, 18))
+  const { result, term, search } = useFuse({
+    data,
+    options,
+  })
 
-  /*
-    <StyledPositionCard bgColor={backgroundColor}>
-      <CardNoise />
-    */
+  const allStaked = positions.reduce((previousValue, currentValue) => {
+    return previousValue + (currentValue.pending / 1e18) * ewdPrice
+  }, 0)
 
-  //console.log(farm?.lpToken0, backgroundColor)
+  const valueStaked = positions.reduce((previousValue, currentValue) => {
+    const pool = farmingPools.find((r) => parseInt(r.id.toString()) == parseInt(currentValue.id))
+    const poolTvl = tvlInfo.find((r) => getAddress(r.lpToken) == getAddress(pool?.lpToken))
+    return previousValue + (currentValue.amount / 1e18) * poolTvl?.lpPrice
+  }, 0)
 
-  const clpamount = new TokenAmount(new Token(ChainId.EWC, farm.lpToken, 18, '', ''), farm.lpChefSupply)
-
-  const yieldamount = new TokenAmount(new Token(ChainId.EWC, farm.lpToken, 18, '', ''), farm.yield)
-
-  const [timerEnded, setTimerEnded] = useState<boolean>(false)
+  const { harvest } = useMasterChef()
 
   return (
-    <Paper>
-      <div
-        className="grid grid-cols-3 py-4 px-4 cursor-pointer select-none rounded text-sm"
-        onClick={() => setExpand(!expand)}
-      >
-        <div className="flex items-center">
-          <div className="mr-4">
-            <DoubleLogo a0={farm.lpToken0} a1={farm.lpToken1} size={26} margin={true} />
-          </div>
-          <div className="hidden sm:block">{farm && farm.lpToken0Symbol + '-' + farm.lpToken1Symbol}</div>
-        </div>
-        <div className="flex justify-end items-center">
-          <div>
-            {/*<div className="text-right">Size</div>*/}
-            {/* hardcode for renBTC */}
-            <div className="text-right">{clpamount.toFixed(clpDecimals(farm.lpToken))} CLP</div>
-            <div className="text-secondary text-right">{`${farm.farmLiquidityPercent
-              .multiply(100)
-              .toFixed(3)}% of total`}</div>
+    <>
+      <Head>
+        <title>Farm | CarbonPaws</title>
+        <meta key="description" name="description" content="Farm EWD" />
+      </Head>
+
+      <div className="container px-0 pb-6 mx-auto">
+        <div className={`mb-2 pb-4 grid grid-cols-12 gap-4`}>
+          <div className="flex items-center justify-center col-span-12 lg:justify">
+            <Link href="/farm">
+              <CarbonPawsLogo />
+            </Link>
           </div>
         </div>
-        <div className="flex justify-end items-center">
-          <div className="text-right font-semibold text-xl">
-            {farm.lpToken === '0x5f91643BeA88572CaBeb64d4A81154868A5C4D5A' && !timerEnded ? (
-              <>
-                <span>Ramping up in</span>
-                <Countdown targetSec={1623787200} times={3600} onFinish={() => setTimerEnded(true)} /> hours
-              </>
-            ) : (
-              `${yieldamount.toFixed(0)}`
-            ) /*formattedPercent(farm.roiPerYear * 100)*/}
+        <DoubleGlowShadow maxWidth={false} opacity={'0.4'}>
+          <div className={`grid grid-cols-12 gap-2 min-h-1/2`}>
+            <div className={`col-span-12`}>
+              <Card className="bg-dark-900 z-4">
+                <div className={`grid grid-cols-12 md:space-x-4 space-y-4 md:space-y-0 `}>
+                  <div className={`col-span-12 md:col-span-3 space-y-4`}>
+                    <div className={`hidden md:block`}>
+                      <Menu
+                        term={term}
+                        onSearch={(value) => {
+                          search(value)
+                        }}
+                        positionsLength={positions.length}
+                      />
+                    </div>
+                    <div className={`flex flex-col items-center justify-between px-6 py-6 `}>
+                      {positions.length > 0 && (
+                        <Button
+                          color="gradient"
+                          className="text-emphasis"
+                          variant={'flexed'}
+                          size={'nobase'}
+                          disabled={pendingTx}
+                          onClick={async () => {
+                            setPendingTx(true)
+                            for (const pos of positions) {
+                              try {
+                                const tx = await harvest(parseInt(pos.id))
+                                addTransaction(tx, {
+                                  summary: `${i18n._(t`Harvest`)} EWD`,
+                                })
+                              } catch (error) {
+                                console.error(error)
+                              }
+                            }
+                            setPendingTx(false)
+                          }}
+                        >
+                          Harvest All (~ {formatNumberScale(allStaked, true, 2)})
+                        </Button>
+                      )}
+                    </div>
+                    <div className={`md:hidden`}>
+                      <Menu
+                        term={term}
+                        onSearch={(value) => {
+                          search(value)
+                        }}
+                        positionsLength={positions.length}
+                      />
+                    </div>
+                  </div>
+                  <div className={`col-span-12 md:col-span-9 py-4 md:px-6 md:py-4 rounded`}>
+                    <div className={'mb-8 px-1 md:px-0'}>
+                      <Search
+                        className={'bg-dark-800 rounded border border-dark-800'}
+                        placeholder={'Search by name, symbol or address'}
+                        term={term}
+                        search={(value: string): void => {
+                          search(value)
+                        }}
+                      />
+                    </div>
+
+                    <FarmList farms={result} term={term} filter={FILTER} />
+                  </div>
+                </div>
+              </Card>
+            </div>
           </div>
-        </div>
+        </DoubleGlowShadow>
       </div>
-      {expand && (
-        <InputGroup
-          pid={farm.pid.toNumber()}
-          pairAddress={farm.lpToken}
-          pairSymbol={farm.symbol}
-          token0Address={farm.lpToken0}
-          token1Address={farm.lpToken1}
-        />
-      )}
-    </Paper>
-  )
-}
-
-const UserBalance = ({ farm }: any) => {
-  const [expand, setExpand] = useState<boolean>(false)
-  //const pending = usePendingRewards(farm.pid.toNumber())
-
-  const depositamount = new TokenAmount(new Token(ChainId.EWC, farm.lpToken, 18, '', ''), farm.deposit)
-
-  const pendingamount = new TokenAmount(new Token(ChainId.EWC, farm.lpToken, 18, '', ''), farm.pending)
-
-  const personalYield = new TokenAmount(new Token(ChainId.EWC, farm.lpToken, 18, '', ''), farm.personalYield)
-
-  /*
-  const sharePercent = new TokenAmount(
-    new Token(ChainId.EWC, farm.lpToken, 18, '', ''),
-    farm.sharePercent
-  )
-  */
-
-  //console.log('yolo sharepecent', farm.sharePercent.toString())
-  return (
-    <Paper>
-      <div
-        className="grid grid-cols-3 py-4 px-4 cursor-pointer select-none rounded text-sm"
-        onClick={() => setExpand(!expand)}
-      >
-        <div className="flex items-center">
-          <div className="mr-4">
-            <DoubleLogo a0={farm.lpToken0} a1={farm.lpToken1} size={26} margin={true} />
-          </div>
-          <div className="hidden sm:block">{farm && farm.lpToken0Symbol + '-' + farm.lpToken1Symbol}</div>
-        </div>
-        <div className="flex justify-end items-center">
-          <div>
-            {/*<div className="text-right">{formattedNum(farm.depositedUSD, true)} </div>*/}
-            <div className="text-right">{depositamount.toSignificant(6)} CLP</div>
-            <div className="text-secondary text-right">{`${farm.sharePercent.multiply(100).toFixed(4)}% share`}</div>
-          </div>
-        </div>
-        <div className="flex justify-end items-center">
-          <div>
-            <div className="text-right">{`${pendingamount.toSignificant(5)} SUSU`} </div>
-            <div className="text-secondary text-right">{`${personalYield.toFixed(1)}/day`}</div>
-          </div>
-        </div>
-      </div>
-      {expand && (
-        <InputGroup
-          pid={farm.pid.toNumber()}
-          pairAddress={farm.lpToken}
-          pairSymbol={farm.symbol}
-          token0Address={farm.lpToken0}
-          token1Address={farm.lpToken1}
-        />
-      )}
-    </Paper>
+    </>
   )
 }

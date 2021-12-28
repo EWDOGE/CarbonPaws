@@ -1,46 +1,44 @@
-import React from 'react'
-import styled from 'styled-components'
+import { CheckCircleIcon, ClipboardCopyIcon } from '@heroicons/react/outline'
+import React, { FC } from 'react'
 import useCopyClipboard from '../../hooks/useCopyClipboard'
+import { classNames } from '../../functions'
+import Typography from '../Typography'
+import { useLingui } from '@lingui/react'
+import { t } from '@lingui/macro'
 
-import { LinkStyledButton } from '../../theme'
-import { CheckCircle, Copy } from 'react-feather'
+interface CopyHelperProps {
+  className?: string
+  toCopy: string
+  children?: React.ReactNode
+}
 
-const CopyIcon = styled(LinkStyledButton)`
-  color: ${({ theme }) => theme.text3};
-  flex-shrink: 0;
-  display: flex;
-  text-decoration: none;
-  font-size: 0.825rem;
-  :hover,
-  :active,
-  :focus {
-    text-decoration: none;
-    color: ${({ theme }) => theme.text2};
-  }
-`
-const TransactionStatusText = styled.span`
-  margin-left: 0.25rem;
-  font-size: 0.825rem;
-  ${({ theme }) => theme.flexRowNoWrap};
-  align-items: center;
-`
-
-export default function CopyHelper(props: { toCopy: string; children?: React.ReactNode }) {
+const CopyHelper: FC<CopyHelperProps> = ({ className, toCopy, children }) => {
   const [isCopied, setCopied] = useCopyClipboard()
+  const { i18n } = useLingui()
 
   return (
-    <CopyIcon onClick={() => setCopied(props.toCopy)}>
-      {isCopied ? (
-        <TransactionStatusText>
-          <CheckCircle size={'16'} />
-          <TransactionStatusText>Copied</TransactionStatusText>
-        </TransactionStatusText>
-      ) : (
-        <TransactionStatusText>
-          <Copy size={'16'} />
-        </TransactionStatusText>
+    <div
+      className={classNames(
+        'flex items-center justify-between flex-shrink-0 space-x-1 no-underline cursor-pointer whitespace-nowrap hover:no-underline focus:no-underline active:no-underline text-yellow opacity-80 hover:opacity-100 focus:opacity-100',
+        className
       )}
-      {isCopied ? '' : props.children}
-    </CopyIcon>
+      onClick={() => setCopied(toCopy)}
+    >
+      {isCopied && (
+        <div className="flex items-center space-x-1 whitespace-nowrap">
+          <Typography variant="sm">{i18n._(t`Copied`)}</Typography>
+          <CheckCircleIcon width={16} height={16} />
+        </div>
+      )}
+
+      {!isCopied && (
+        <>
+          {children}
+          <ClipboardCopyIcon width={16} height={16} />
+        </>
+      )}
+    </div>
   )
 }
+
+export default CopyHelper

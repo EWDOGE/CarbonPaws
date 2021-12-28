@@ -1,106 +1,74 @@
+import { ArrowLeftIcon } from '@heroicons/react/solid'
+import HistoryLink from 'next/link'
+import { Percent } from '../../sdk'
 import React from 'react'
-import styled from 'styled-components'
-import { darken } from 'polished'
-import { useTranslation } from 'react-i18next'
-import { NavLink, Link as HistoryLink } from 'react-router-dom'
-
-import { ArrowLeft } from 'react-feather'
 import { RowBetween } from '../Row'
-// import QuestionHelper from '../QuestionHelper'
-import Settings from '../Settings'
-import { useDispatch } from 'react-redux'
-import { AppDispatch } from 'state'
-import { resetMintState } from 'state/mint/actions'
+import SettingsTab from '../Settings'
+import { resetMintState } from '../../state/mint/actions'
+import styled from 'styled-components'
+import { t } from '@lingui/macro'
+import { useAppDispatch } from '../../state/hooks'
+import { useLingui } from '@lingui/react'
 
 const Tabs = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
+  display: flex;
+  flex-wrap: no-wrap;
   align-items: center;
   border-radius: 3rem;
   justify-content: space-evenly;
 `
 
-const activeClassName = 'ACTIVE'
-
-const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
-})`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  justify-content: center;
-  height: 3rem;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text3};
-  font-size: 20px;
-
-  &.${activeClassName} {
-    border-radius: 12px;
-    font-weight: 500;
-    color: ${({ theme }) => theme.text1};
-  }
-
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
-  }
-`
-
-const ActiveText = styled.div`
-  font-weight: 500;
-  font-size: 20px;
-`
-
-const StyledArrowLeft = styled(ArrowLeft)`
-  color: ${({ theme }) => theme.text1};
-`
-
-export function SwapPoolTabs({ active }: { active: 'swap' | 'pool' }) {
-  const { t } = useTranslation()
-  return (
-    <Tabs style={{ marginBottom: '20px', display: 'none' }}>
-      <StyledNavLink id={`swap-nav-link`} to={'/swap'} isActive={() => active === 'swap'}>
-        {t('swap')}
-      </StyledNavLink>
-      <StyledNavLink id={`pool-nav-link`} to={'/pool'} isActive={() => active === 'pool'}>
-        {t('pool')}
-      </StyledNavLink>
-    </Tabs>
-  )
-}
-
 export function FindPoolTabs() {
+  const { i18n } = useLingui()
+
   return (
     <Tabs>
-      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
-        <HistoryLink to="/pool">
-          <StyledArrowLeft />
+      <RowBetween className="items-center text-xl">
+        <HistoryLink href="/exchange/pool">
+          <a>
+            <ArrowLeftIcon width="1em" height="1em" />
+          </a>
         </HistoryLink>
-        <ActiveText>Import Pool</ActiveText>
-        <Settings />
+        <div className="font-semibold">{i18n._(t`Import Pool`)}</div>
       </RowBetween>
     </Tabs>
   )
 }
 
-export function AddRemoveTabs({ adding, creating }: { adding: boolean; creating: boolean }) {
+export function AddRemoveTabs({
+  adding,
+  creating,
+  defaultSlippage,
+}: {
+  adding: boolean
+  creating: boolean
+  defaultSlippage: Percent
+}) {
+  const { i18n } = useLingui()
+
   // reset states on back
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useAppDispatch()
 
   return (
     <Tabs>
-      <RowBetween style={{ padding: '1rem 1rem 0 1rem' }}>
-        <HistoryLink
-          to="/pool"
-          onClick={() => {
-            adding && dispatch(resetMintState())
-          }}
-        >
-          <StyledArrowLeft />
+      <RowBetween className="items-center text-xl">
+        <HistoryLink href="/add">
+          <a
+            onClick={() => {
+              if (adding) {
+                // not 100% sure both of these are needed
+                dispatch(resetMintState())
+              }
+            }}
+            className="flex items-center"
+          >
+            <ArrowLeftIcon width="1em" height="1em" />
+          </a>
         </HistoryLink>
-        <ActiveText>{creating ? 'Create a pair' : adding ? 'Add Liquidity' : 'Remove Liquidity'}</ActiveText>
-        <Settings />
+        <div className="font-semibold">
+          {creating ? i18n._(t`Create a pair`) : adding ? i18n._(t`Add Liquidity`) : i18n._(t`Remove Liquidity`)}
+        </div>
+        <SettingsTab placeholderSlippage={defaultSlippage} />
       </RowBetween>
     </Tabs>
   )

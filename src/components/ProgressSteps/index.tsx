@@ -1,7 +1,7 @@
-import React from 'react'
-import styled from 'styled-components'
-import { RowBetween } from '../Row'
 import { AutoColumn } from '../Column'
+import React from 'react'
+import { RowBetween } from '../Row'
+import styled from 'styled-components'
 import { transparentize } from 'polished'
 
 const Wrapper = styled(AutoColumn)``
@@ -13,10 +13,10 @@ const Grouping = styled(RowBetween)`
 const Circle = styled.div<{ confirmed?: boolean; disabled?: boolean }>`
   min-width: 20px;
   min-height: 20px;
-  background-color: ${({ theme, confirmed, disabled }) =>
-    disabled ? theme.bg4 : confirmed ? theme.green1 : theme.primary1};
+  background-color: ${({ confirmed, disabled }) =>
+    disabled ? '#202231' : confirmed ? '#7b6532' : '#7b6532'};
   border-radius: 50%;
-  color: ${({ theme }) => theme.white};
+  color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,13 +36,22 @@ const Connector = styled.div<{ prevConfirmed?: boolean; disabled?: boolean }>`
   background-color: ;
   background: linear-gradient(
     90deg,
-    ${({ theme, prevConfirmed, disabled }) =>
-        disabled ? theme.bg4 : transparentize(0.5, prevConfirmed ? theme.green1 : theme.primary1)}
+    ${({ prevConfirmed, disabled }) =>
+        disabled ? '#7b6532' : transparentize(0.5, prevConfirmed ? '#7b6532' : '#7b6532')}
       0%,
-    ${({ theme, prevConfirmed, disabled }) => (disabled ? theme.bg4 : prevConfirmed ? theme.primary1 : theme.bg4)} 80%
+    ${({ prevConfirmed, disabled }) => (disabled ? '#202231' : prevConfirmed ? '#7b6532' : '#202231')} 80%
   );
   opacity: 0.6;
 `
+
+// background: linear-gradient(
+//     90deg,
+//     ${({ theme, prevConfirmed, disabled }) =>
+//             disabled ? theme.bg4 : transparentize(0.5, prevConfirmed ? theme.green1 : theme.primary1)}
+//         0%,
+//     ${({ theme, prevConfirmed, disabled }) => (disabled ? theme.bg4 : prevConfirmed ? theme.primary1 : theme.bg4)}
+//         80%
+// );
 
 interface ProgressCirclesProps {
   steps: boolean[]
