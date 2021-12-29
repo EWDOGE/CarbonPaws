@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import useSWR from "swr";
+import useSWR from 'swr'
 import { useWeb3React } from '@web3-react/core'
 import { useModalOpen, useTokenStatsModalToggle } from '../../state/application/hooks'
 
@@ -12,15 +12,14 @@ import styled from 'styled-components'
 import { t } from '@lingui/macro'
 import { useLingui } from '@lingui/react'
 import Typography from '../../components/Typography'
-import { useTokenInfo} from '../../features/farm/hooks'
+import { useTokenInfo } from '../../features/farm/hooks'
 import { formatNumberScale } from '../../functions'
 import { ExternalLink as LinkIcon } from 'react-feather'
 import { PriceContext } from '../../contexts/priceContext'
 import { useSolarContract } from '../../hooks'
 import QuestionHelper from '../../components/QuestionHelper'
 
-const fetcher = (url) => fetch(url).then((res) => res.json());
-
+const fetcher = (url) => fetch(url).then((res) => res.json())
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -78,23 +77,21 @@ const WALLET_VIEWS = {
 export default function TokenStatsModal({ token }: { token: any }) {
   const { i18n } = useLingui()
 
-  const { data, error } = useSWR(
-    "https://explorer.energyweb.org/api?module=stats&action=coinsupply",
-    fetcher
-  );
+  const { data, error } = useSWR('https://explorer.energyweb.org/api?module=stats&action=coinsupply', fetcher)
 
   var priceData = useContext(PriceContext)
   let tokenInfo = useTokenInfo(useSolarContract())
 
   let ewtsupply = data
 
-  var price = formatNumberScale(priceData?.[token.symbol.toLowerCase()]/100, true, 2)
-  var mcap =  formatNumberScale(Number(tokenInfo.circulatingSupply) * (priceData?.[token.symbol.toLowerCase()]/100),true,2)
+  var price = formatNumberScale(priceData?.[token.symbol.toLowerCase()] / 100, true, 2)
+  var mcap = formatNumberScale(Number(tokenInfo.circulatingSupply) * priceData?.[token.symbol.toLowerCase()], true, 2)
 
-  if (token.symbol == 'EWT') tokenInfo = { circulatingSupply: ewtsupply, burnt: '0', totalSupply: '0', vaults: '0'  }
-  if (token.symbol == 'EWT') price = formatNumberScale(priceData?.["EWT".toLowerCase()], true, 2)
-  if (token.symbol == 'EWT') mcap = formatNumberScale(Number(tokenInfo.circulatingSupply) * (priceData?.["EWT".toLowerCase()]),true,2)
-  if (token.symbol == 'EWD') price = formatNumberScale(priceData?.["EWD".toLowerCase()]/100, true, 4)
+  if (token.symbol == 'EWT') tokenInfo = { circulatingSupply: ewtsupply, burnt: '0', totalSupply: '0', vaults: '0' }
+  if (token.symbol == 'EWT') price = formatNumberScale(priceData?.['EWT'.toLowerCase()] / 100, true, 2)
+  if (token.symbol == 'EWT')
+    mcap = formatNumberScale(Number(tokenInfo.circulatingSupply) * (priceData?.['EWT'.toLowerCase()] / 100), true, 2)
+  if (token.symbol == 'EWD') price = formatNumberScale(priceData?.['EWD'.toLowerCase()], true, 4)
 
   const modalOpen = useModalOpen(token.symbol == 'EWD' ? ApplicationModal.EWD_STATS : ApplicationModal.EWT_STATS)
 
@@ -136,9 +133,7 @@ export default function TokenStatsModal({ token }: { token: any }) {
               <div className="flex items-center justify-between gap-2 space-x-3">
                 {token?.address && (
                   <ExternalLink
-                    href={
-                      'https://explorer.energyweb.org/tokens/0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891'
-                    }
+                    href={'https://explorer.energyweb.org/tokens/0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891'}
                     className="px-3 ring-0 ring-transparent ring-opacity-0"
                     color="light-green"
                     startIcon={<LinkIcon size={16} />}
@@ -213,7 +208,7 @@ export default function TokenStatsModal({ token }: { token: any }) {
               <Typography variant="sm" className="flex items-center py-0.5">
                 {i18n._(t`Market Cap`)}
               </Typography>,
-                mcap
+              mcap
             )}
           </div>
         </div>

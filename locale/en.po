@@ -66,7 +66,7 @@ msgstr "- Locker contract address: {0}"
 msgid "- You will not be able to withdraw your tokens before the unlock time"
 msgstr "- You will not be able to withdraw your tokens before the unlock time"
 
-#: src/features/farm/FarmListItem2.tsx:126
+#: src/features/farm/FarmListItem2.tsx:132
 #: src/features/vault/VaultListItem.tsx:123
 msgid "/ DAY"
 msgstr "/ DAY"
@@ -237,8 +237,8 @@ msgstr "Amount to Remove"
 msgid "An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note fee on transfer and rebase tokens are incompatible with Uniswap V3."
 msgstr "An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note fee on transfer and rebase tokens are incompatible with Uniswap V3."
 
-#: src/components/Header/index.tsx:69
-#: src/components/Header/index.tsx:175
+#: src/components/Header/index.tsx:68
+#: src/components/Header/index.tsx:170
 msgid "Analytics"
 msgstr "Analytics"
 
@@ -513,8 +513,8 @@ msgstr "Change"
 #~ msgstr "Check out our website for more info."
 
 #: src/components/LanguageSwitch/index.tsx:45
-msgid "Chinese"
-msgstr "Chinese"
+#~ msgid "Chinese"
+#~ msgstr "Chinese"
 
 #: src/modals/TokenStatsModal/index.tsx:166
 msgid "Circulating Supply"
@@ -695,8 +695,8 @@ msgstr "Create pool"
 msgid "Current"
 msgstr "Current"
 
-#: src/components/Header/index.tsx:60
-#: src/components/Header/index.tsx:167
+#: src/components/Header/index.tsx:59
+#: src/components/Header/index.tsx:162
 msgid "DAO"
 msgstr "DAO"
 
@@ -893,8 +893,8 @@ msgstr "Expiration is the time at which the order will become invalid"
 msgid "Expired"
 msgstr "Expired"
 
-#: src/components/Header/index.tsx:51
-#: src/components/Header/index.tsx:159
+#: src/components/Header/index.tsx:50
+#: src/components/Header/index.tsx:154
 msgid "Farm"
 msgstr "Farm"
 
@@ -1029,7 +1029,7 @@ msgstr "Go Back"
 #: src/features/farm/FarmListItem.tsx:97
 #: src/features/farm/FarmListItemDetails.tsx:235
 #: src/features/vault/VaultListItemDetails.tsx:294
-#: src/pages/farm/index.tsx:222
+#: src/pages/farm/index.tsx:220
 msgid "Harvest"
 msgstr "Harvest"
 
@@ -1583,7 +1583,7 @@ msgstr "Open Orders"
 #~ msgid "Open Source"
 #~ msgstr "Open Source"
 
-#: src/components/Header/index.tsx:103
+#: src/components/Header/index.tsx:98
 msgid "Open main menu"
 msgstr "Open main menu"
 
@@ -1674,8 +1674,8 @@ msgstr "Please type the word \"confirm\" to enable expert mode."
 msgid "Please type the word \"confirm\" to {0} and lock your tokens for {1}."
 msgstr "Please type the word \"confirm\" to {0} and lock your tokens for {1}."
 
-#: src/components/Header/index.tsx:43
-#: src/components/Header/index.tsx:151
+#: src/components/Header/index.tsx:42
+#: src/components/Header/index.tsx:146
 #: src/pages/exchange/pool/index.tsx:95
 msgid "Pool"
 msgstr "Pool"
@@ -2083,8 +2083,8 @@ msgstr "Supplying {0} {1} and {2} {3}"
 #~ msgstr "SushiSwap"
 
 #: src/components/ExchangeHeader.tsx:42
-#: src/components/Header/index.tsx:35
-#: src/components/Header/index.tsx:143
+#: src/components/Header/index.tsx:34
+#: src/components/Header/index.tsx:138
 #: src/pages/exchange/swap/[[...tokens]].tsx:569
 #: src/pages/exchange/swap/[[...tokens]].tsx:598
 msgid "Swap"
@@ -2706,7 +2706,7 @@ msgstr "Your transactions will appear here..."
 #~ msgid "above"
 #~ msgstr "above"
 
-#: src/features/farm/FarmListItem2.tsx:146
+#: src/features/farm/FarmListItem2.tsx:152
 #: src/features/vault/VaultListItem.tsx:141
 msgid "annualized"
 msgstr "annualized"

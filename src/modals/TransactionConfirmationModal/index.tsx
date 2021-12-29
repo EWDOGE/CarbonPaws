@@ -15,8 +15,8 @@ import { getExplorerLink } from '../../functions/explorer'
 import loadingRollingCircle from '../../animation/loading-rolling-circle.json'
 import carbonpawsLoading from '../../animation/carbonpaws-loading.json'
 import { useActiveWeb3React } from '../../hooks/useActiveWeb3React'
-import useAddTokenToMetaMask from '../../hooks/useAddTokenToMetaMask'
 import { useLingui } from '@lingui/react'
+import useAddTokenToMetaMask from '../../hooks/useAddTokenToMetamask'
 
 interface ConfirmationPendingContentProps {
   onDismiss: () => void

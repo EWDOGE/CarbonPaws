@@ -11,7 +11,6 @@ import { t } from '@lingui/macro'
 import { useActiveWeb3React } from '../../hooks/useActiveWeb3React'
 import { useLingui } from '@lingui/react'
 import TokenStats from '../TokenStats'
-import LanguageSwitch from '../LanguageSwitch'
 
 function AppBar(): JSX.Element {
   const { i18n } = useLingui()
@@ -88,9 +87,6 @@ function AppBar(): JSX.Element {
                     <div className="flex items-center w-auto text-xs font-bold bg-transparent rounded shadow-sm cursor-pointer pointer-events-auto select-none text-primary hover:bg-dark-900 whitespace-nowrap">
                       <Web3Status />
                     </div>
-                    <div className="hidden md:block">
-                      <LanguageSwitch />
-                    </div>
                     <More />
                   </div>
                 </div>
@@ -98,7 +94,6 @@ function AppBar(): JSX.Element {
                   <div className="flex-1">
                     <Image src="/icon.png" alt="CarbonPaws" height="40px" width="40px" className="sm:hidden" />
                   </div>
-                  <LanguageSwitch />
                   <Popover.Button className="inline-flex items-center justify-center p-2 rounded-md text-primary hover:text-high-emphesis focus:outline-none">
                     <span className="sr-only">{i18n._(t`Open main menu`)}</span>
                     {open ? (

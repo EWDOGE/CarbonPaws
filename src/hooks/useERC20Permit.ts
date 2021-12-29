@@ -1,13 +1,5 @@
-import {
-  Currency,
-  CurrencyAmount,
-  JSBI,
-  Percent,
-  Token,
-  TradeType,
-  Trade as V2Trade,
-} from '../sdk'
-import { DAI, USDC } from '../constants/tokens'
+import { Currency, CurrencyAmount, JSBI, Percent, Token, TradeType, Trade as V2Trade } from '../sdk'
+import { DAI } from '../constants/tokens'
 import { useMemo, useState } from 'react'
 
 import { splitSignature } from 'ethers/lib/utils'
@@ -37,8 +29,7 @@ const PERMITTABLE_TOKENS: {
   [chainId: number]: {
     [checksummedTokenAddress: string]: PermitInfo
   }
-} = {
-}
+} = {}
 
 export enum UseERC20PermitState {
   // returned for any reason, e.g. it is an argent wallet, or the currency does not support it

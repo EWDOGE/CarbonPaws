@@ -6,9 +6,9 @@ import { SupportedChainId } from '../chains'
 export const EWC: { [key: string]: Token } = {
   DAI: new Token(ChainId.EWC, '0x3862F260e94904aaAe628DdF427b1F662652BBD2', 18, 'DAI', 'Dai Stablecoin'),
   EWD: new Token(ChainId.EWC, '0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891', 18, 'EWD', 'CarbonPaws Token'),
-
 }
 
+export const DAI = new Token(ChainId.EWC, '0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891', 18, 'DAI', 'Dai')
 
 type ChainTokenMap = {
   readonly [chainId in ChainId]?: Token
@@ -24,13 +24,7 @@ export const EWD: ChainTokenMap = {
 
 export const WETH9_EXTENDED: { [chainId: number]: Token } = {
   ...WETH9,
-  [SupportedChainId.EWC]: new Token(
-    ChainId.EWC,
-    '0x6b3bd0478DF0eC4984b168Db0E12A539Cc0c83cd',
-    18,
-    'EWT',
-    'EnergyWeb'
-  ),
+  [SupportedChainId.EWC]: new Token(ChainId.EWC, '0x6b3bd0478DF0eC4984b168Db0E12A539Cc0c83cd', 18, 'EWT', 'EnergyWeb'),
 }
 
 export class ExtendedEther extends Ether {

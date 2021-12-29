@@ -18,7 +18,7 @@ module.exports = withBundleAnalyzer(
       disable: true,
     },
     images: {
-      domains: ['carbonpaws.io', 'res.cloudinary.com', 'raw.githubusercontent.com', 'logos.covalenthq.com', 'app.carbonpaws.io'],
+      domains: ['carbonpaws.io', 'res.cloudinary.com', 'raw.githubusercontent.com', 'app.carbonpaws.io'],
     },
     reactStrictMode: true,
     serverRuntimeConfig: {

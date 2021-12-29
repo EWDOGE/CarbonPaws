@@ -103,7 +103,7 @@ export default function Bridge() {
 
   const currentChainFrom = chainId &&
     SUPPORTED_NETWORKS[chainId] && { id: chainId, icon: NETWORK_ICON[chainId], name: NETWORK_LABEL[chainId] }
-
+  /* eslint-disable */
   useEffect(() => {
     activate(bridgeInjected)
     if (chainId) {
@@ -113,12 +113,10 @@ export default function Bridge() {
       setChainFrom({ id: chainId, icon: NETWORK_ICON[chainId], name: NETWORK_LABEL[chainId] })
     }
   }, [activate, chainId, activeAccount, activeChainId])
-
+  /* eslint-enable */
   const [chainFrom, setChainFrom] = useState<Chain | null>(currentChainFrom || DEFAULT_CHAIN_FROM)
 
-  const [chainTo, setChainTo] = useState<Chain | null>(
-    chainId == ChainId.EWC ? DEFAULT_CHAIN_FROM : DEFAULT_CHAIN_TO
-  )
+  const [chainTo, setChainTo] = useState<Chain | null>(chainId == ChainId.EWC ? DEFAULT_CHAIN_FROM : DEFAULT_CHAIN_TO)
 
   const [tokenList, setTokenList] = useState<Currency[] | null>([])
   const [currency0, setCurrency0] = useState<Currency | null>(null)
@@ -137,7 +135,6 @@ export default function Bridge() {
     account ?? undefined,
     currency0 ?? undefined
   )
-
 
   const { data: anyswapInfo, error }: SWRResponse<AnyswapTokensMap, Error> = useSWR(
     'https://bridgeapi.anyswap.exchange/v2/serverInfo/246',

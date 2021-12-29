@@ -1,6 +1,7 @@
 import { classNames, formatNumber, formatNumberScale, formatPercent } from '../../functions'
 
 import { Disclosure } from '@headlessui/react'
+import { useContract } from '../../hooks/useContract'
 import DoubleLogo from '../../components/DoubleLogo'
 import FarmListItemDetails from './FarmListItemDetails'
 import Image from '../../components/Image'
@@ -19,6 +20,9 @@ import { WNATIVE } from '../../constants'
 import { PriceContext } from '../../contexts/priceContext'
 import { Info } from 'react-feather'
 import Link from 'next/link'
+import ERC20_ABI from '../../constants/abis/erc20.json'
+import { getAddress } from '@ethersproject/address'
+import zip from 'lodash/zip'
 
 const FarmListItem2 = ({ farm, ...rest }) => {
   const { chainId } = useActiveWeb3React()
@@ -44,22 +48,21 @@ const FarmListItem2 = ({ farm, ...rest }) => {
       decimals = farm.pair.token0?.decimals
     } else if (farm.lpToken.toLowerCase() == WNATIVE[chainId].toLowerCase()) {
       lpPrice = ewtPrice
-    }  else {
+    } else {
       lpPrice = pairPrice
     }
 
     farm.lpPrice = lpPrice
     farm.ewdPrice = ewdPrice
 
-    return Number(0)
+    return Number(farm.totalLp / 10 ** decimals) * lpPrice
   }
 
   const tvl = getTvl()
 
-  const roiPerBlock =
-    farm?.rewards?.reduce((previousValue, currentValue) => {
-      return previousValue + currentValue.rewardPerBlock * currentValue.rewardPrice
-    }, 0) / tvl
+  const roiPerBlock = farm?.rewards?.reduce((previousValue, currentValue) => {
+    return previousValue + currentValue.rewardPerBlock * currentValue.rewardPrice
+  }, 0)
 
   const roiPerHour = roiPerBlock * farm.blocksPerHour
   const roiPerDay = roiPerHour * 24
@@ -104,7 +107,7 @@ const FarmListItem2 = ({ farm, ...rest }) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col justify-center font-bold">N/A</div>
+                <div className="flex flex-col justify-center font-bold">{formatNumberScale(tvl, true, 2)}</div>
                 <div className="flex-row items-center hidden space-x-4 md:flex">
                   <div className="flex items-center space-x-2">
                     {farm?.rewards?.map((reward, i) => (
@@ -141,7 +144,7 @@ const FarmListItem2 = ({ farm, ...rest }) => {
                       <Info />
                     </IconWrapper>
                     {/* {formatPercent(farm?.roiPerYear || 7508 * 100)} */}
-                    {formatPercent(roiPerYear)}
+                    {formatNumber(tvl)}
                   </div>
                   <div className="text-xs text-right md:text-base text-secondary">{i18n._(t`annualized`)}</div>
                 </div>

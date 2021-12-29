@@ -80,7 +80,7 @@ const FarmListItem = ({ farm }) => {
               <div className="pr-4 mb-2 text-left cursor-pointer text-secondary">
                 {i18n._(t`Wallet Balance`)}: {formatNumberScale(balance?.toSignificant(4, undefined, 2) ?? 0, false, 4)}
                 {farm.lpPrice && balance
-                  ? ` (` + formatNumberScale(farm.lpPrice * Number(balance?.toFixed(18)/100), true, 2) + `)`
+                  ? ` (` + formatNumberScale((farm.lpPrice * Number(balance?.toFixed(18))) / 100, true, 2) + `)`
                   : ``}
               </div>
             )}
@@ -137,7 +137,7 @@ const FarmListItem = ({ farm }) => {
                 onClick={async () => {
                   setPendingTx(true)
                   try {
-                    // KMP decimals depend on asset, SLP is always 18
+                    // KMP decimals depend on asset, CLP is always 18
                     const tx = await deposit(farm?.id, depositValue.toBigNumber(liquidityToken?.decimals))
 
                     addTransaction(tx, {
@@ -165,7 +165,7 @@ const FarmListItem = ({ farm }) => {
               <div className="pr-4 mb-2 text-left cursor-pointer text-secondary">
                 {i18n._(t`Your Staked`)}: {formatNumberScale(amount?.toSignificant(6)) ?? 0}
                 {farm.lpPrice && amount
-                  ? ` (` + formatNumberScale(farm.lpPrice * Number(amount?.toSignificant(8))/100, true, 2) + `)`
+                  ? ` (` + formatNumberScale((farm.lpPrice * Number(amount?.toSignificant(8))) / 100, true, 2) + `)`
                   : ``}
               </div>
             )}
@@ -200,7 +200,7 @@ const FarmListItem = ({ farm }) => {
               onClick={async () => {
                 setPendingTx(true)
                 try {
-                  // KMP decimals depend on asset, SLP is always 18
+                  // KMP decimals depend on asset, CLP is always 18
                   const tx = await withdraw(farm?.id, withdrawValue.toBigNumber(liquidityToken?.decimals))
                   addTransaction(tx, {
                     summary: `${i18n._(t`Withdraw`)} ${

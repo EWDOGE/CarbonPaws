@@ -32,10 +32,10 @@ function TokenStatusInner({ token }) {
 
   var priceData = useContext(PriceContext)
 
-  var price = formatNumberScale(priceData?.[token.symbol.toLowerCase()]/100, true, 2)
-  
-  if (token.symbol == 'EWT') price = formatNumberScale(priceData?.["EWT".toLowerCase()], true, 2)
-  if (token.symbol == 'EWD') price = formatNumberScale(priceData?.["EWD".toLowerCase()]/100, true, 4)
+  var price = formatNumberScale(priceData?.[token.symbol.toLowerCase()] / 100, true, 2)
+
+  if (token.symbol == 'EWT') price = formatNumberScale(priceData?.['EWT'.toLowerCase()] / 100, true, 2)
+  if (token.symbol == 'EWD') price = formatNumberScale(priceData?.['EWD'.toLowerCase()], true, 4)
 
   return (
     <div className="flex pl-2" onClick={toggleModal}>
@@ -49,9 +49,7 @@ function TokenStatusInner({ token }) {
           className="rounded-md"
         />
       )}
-      <div className="px-3 py-2 text-primary text-bold">
-        {price}
-      </div>
+      <div className="px-3 py-2 text-primary text-bold">{price}</div>
     </div>
   )
 }

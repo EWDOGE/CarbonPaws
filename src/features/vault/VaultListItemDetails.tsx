@@ -170,7 +170,7 @@ const VaultListItem = ({ farm }) => {
                     const fn = async () => {
                       setPendingTx(true)
                       try {
-                        // KMP decimals depend on asset, SLP is always 18
+                        // KMP decimals depend on asset, CLP is always 18
                         const tx = await deposit(farm?.id, depositValue.toBigNumber(liquidityToken?.decimals))
 
                         addTransaction(tx, {
@@ -244,14 +244,15 @@ const VaultListItem = ({ farm }) => {
                   pendingTx ||
                   !typedWithdrawValue ||
                   amount.lessThan(typedWithdrawValue) ||
-                  (amount && !amount.equalTo(ZERO) &&
+                  (amount &&
+                    !amount.equalTo(ZERO) &&
                     farm?.lockupDuration > 0 &&
                     moment.unix(userLockedUntil / 1000).isAfter(new Date()))
                 }
                 onClick={async () => {
                   setPendingTx(true)
                   try {
-                    // KMP decimals depend on asset, SLP is always 18
+                    // KMP decimals depend on asset, CLP is always 18
                     const tx = await withdraw(farm?.id, withdrawValue.toBigNumber(liquidityToken?.decimals))
                     addTransaction(tx, {
                       summary: `${i18n._(t`Withdraw`)} ${

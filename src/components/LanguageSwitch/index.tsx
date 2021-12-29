@@ -15,68 +15,12 @@ const LANGUAGES: {
     flag: '/images/flags/uk.png',
     language: t`English`,
   },
-  // 'pt-BR': {
-  //   flag: '/images/flags/br.png',
-  //   language: t`Portuguese`,
-  //   dialect: 'BR',
-  // },
-  // de: {
-  //   flag: '/images/flags/de-flag.png',
-  //   language: t`German`,
-  // },
-  // it: {
-  //   flag: '/images/flags/it-flag.png',
-  //   language: t`Italian`,
-  // },
-  // ru: {
-  //   flag: '/images/flags/ru-flag.png',
-  //   language: t`Russian`,
-  // },
-  // ro: {
-  //   flag: '/images/flags/ro-flag.png',
-  //   language: t`Romanian`,
-  // },
-  // vi: {
-  //   flag: '/images/flags/vi-flag.png',
-  //   language: t`Vietnamese`,
-  // },
-  'zh-CN': {
-    flag: '/images/flags/ch-flag.png',
-    language: t`Chinese`,
-    dialect: '简',
-  },
-  // 'zh-TW': {
-  //   flag: '/images/flags/ch-flag.png',
-  //   language: t`Chinese`,
-  //   dialect: '繁',
-  // },
-  // es: {
-  //   flag: '/images/flags/es-flag.png',
-  //   language: t`Spanish`,
-  // },
-  // 'es-AR': {
-  //   flag: '/images/flags/es-flag.png',
-  //   language: t`Spanish`,
-  //   dialect: 'AR',
-  // },
-  // ko: {
-  //   flag: '/images/flags/ko-flag.png',
-  //   language: t`Korean`,
-  // },
-  // ja: {
-  //   flag: '/images/flags/ja-flag.png',
-  //   language: t`Japanese`,
-  // },
-  // fr: {
-  //   flag: '/images/flags/fr-flag.png',
-  //   language: t`French`,
-  // },
 }
 
 export default function LangSwitcher() {
   const { locale, locales, asPath } = useRouter()
   return (
-    <Menu as="div" className="relative flex inline-block text-right justify-center">
+    <Menu as="div" className="relative flex justify-center inline-block text-right">
       {({ open }) => (
         <>
           <div>

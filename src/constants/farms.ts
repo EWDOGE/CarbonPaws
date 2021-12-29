@@ -38,7 +38,7 @@ export const POOLS: AddressMap = {
         decimals: 18,
       },
       name: 'CarbonPaws LP',
-      symbol: 'SLP',
+      symbol: 'CLP',
     },
     '0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891': {
       id: 1,
@@ -73,7 +73,7 @@ export const POOLS: AddressMap = {
         decimals: 18,
       },
       name: 'CarbonPaws LP',
-      symbol: 'SLP',
+      symbol: 'CLP',
     },
     '0xBb261983A11895970122157c8CAd56EE488f9eb8': {
       id: 3,
@@ -90,7 +90,7 @@ export const POOLS: AddressMap = {
         decimals: 18,
       },
       name: 'CarbonPaws LP',
-      symbol: 'SLP',
+      symbol: 'CLP',
     },
   },
 }

@@ -1,6 +1,4 @@
-/* eslint-disable @next/next/link-passhref */
 import { useActiveWeb3React, useFuse } from '../../hooks'
-
 import FarmList from '../../features/farm/FarmList'
 import Head from 'next/head'
 import Menu from '../../features/farm/FarmMenu'
@@ -43,7 +41,7 @@ export default function Farm(): JSX.Element {
 
   const priceData = useContext(PriceContext)
 
-  const ewdPrice = priceData?.['ewd']/100
+  const ewdPrice = priceData?.['ewd'] / 100
   const ewtPrice = priceData?.['ewt']
 
   const tvlInfo = useTVL()

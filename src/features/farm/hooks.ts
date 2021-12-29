@@ -1,13 +1,9 @@
 import { CurrencyAmount, JSBI, MASTERCHEF_ADDRESS, Token } from '../../sdk'
 import { Chef } from './enum'
-import { EWD, MASTERCHEF_V2_ADDRESS, MINICHEF_ADDRESS } from '../../constants'
+import { EWD } from '../../constants'
 import { NEVER_RELOAD, useSingleCallResult, useSingleContractMultipleData } from '../../state/multicall/hooks'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import {
-  useEWDFarmz,
-  useEWDEWTContract,
-  useEWTDAIContract,
-} from '../../hooks'
+import { useEWDFarmz, useEWDEWTContract, useEWTDAIContract } from '../../hooks'
 
 import { Contract } from '@ethersproject/contracts'
 import { Zero } from '@ethersproject/constants'
@@ -172,7 +168,7 @@ export function useSolarFarms(contract?: Contract | null) {
       lpToken: data[0].result?.['lpToken'] || '',
       allocPoint: data[0].result?.['allocPoint'] || '',
       lastRewardBlock: data[0].result?.['lastRewardBlock'] || '',
-      accERC20PerShare: data[0].result?.['accERC20PerShare'] || ''
+      accERC20PerShare: data[0].result?.['accERC20PerShare'] || '',
     }))
   }, [args, poolInfo])
 }
@@ -216,14 +212,13 @@ export function usePriceApi() {
   return Promise.all([axios.get('/api/prices')])
 }
 
-
 export function usePrice(pairContract?: Contract | null, pairDecimals?: number | null, invert: boolean = false) {
   const { account, chainId } = useActiveWeb3React()
 
   const result = useSingleCallResult(pairContract ? pairContract : null, 'getReserves', undefined, NEVER_RELOAD)?.result
 
-  const _reserve1 = invert ? result?.['reserve0'] : result?.['reserve1']
-  const _reserve0 = invert ? result?.['reserve1'] : result?.['reserve0']
+  const _reserve0 = invert ? result?.['reserve0'] : result?.['reserve1']
+  const _reserve1 = invert ? result?.['reserve1'] : result?.['reserve0']
 
   const price = _reserve1 ? (Number(_reserve1) / Number(_reserve0)) * (pairDecimals ? 10 ** pairDecimals : 1) : 0
 
@@ -284,12 +279,12 @@ export function useFarms() {
 
 export function usePricesApi() {
   const ewtPrice = useEWTPrice()
-  const ewdPrice = useSolarPrice()
+  const ewdPrice = useEWDPrice()
 
   return useMemo(() => {
     return {
       ewt: ewtPrice,
-      ewd: ewdPrice * ewtPrice,
+      ewd: ewtPrice / ewdPrice,
       usdc: 1,
     }
   }, [ewtPrice, ewdPrice])
@@ -302,15 +297,13 @@ export function useFarmsApi() {
 
 export function useEWTPrice() {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  return usePrice(useEWTDAIContract(),2)
+  return usePrice(useEWTDAIContract(), 2)
 }
 
-export function useSolarPrice() {
+export function useEWDPrice() {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  return usePrice(useEWDEWTContract(),2)
+  return usePrice(useEWDEWTContract(), 2)
 }
-
-
 
 export function useSolarDistributorInfo(contract: Contract) {
   const rewardPerBlock = useSingleCallResult(contract ? contract : null, 'rewardPerBlock', undefined, NEVER_RELOAD)
