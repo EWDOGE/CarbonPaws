@@ -1,15 +1,5 @@
 import { ARCHER_RELAY_URI, BIPS_BASE, EIP_1559_ACTIVATION_BLOCK } from '../constants'
-import {
-  ChainId,
-  Currency,
-  CurrencyAmount,
-  Ether,
-  JSBI,
-  Percent,
-  Router,
-  TradeType,
-  Trade as V2Trade,
-} from '../sdk'
+import { ChainId, Currency, CurrencyAmount, Ether, JSBI, Percent, Router, TradeType, Trade as V2Trade } from '../sdk'
 import { isAddress, isZero } from '../functions/validate'
 import { useFactoryContract, useRouterContract } from './useContract'
 
@@ -185,7 +175,7 @@ export function swapErrorToUserReadableMessage(error: any): string {
       return t`The transaction could not be sent because the deadline has passed. Please check that your transaction deadline is not too low.`
     case 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT':
     case 'UniswapV2Router: EXCESSIVE_INPUT_AMOUNT':
-      return t`This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance.`
+      return t`This transaction will not succeed either due to price movement or fee on transfer. Try increasing your slippage tolerance to 2.1%!`
     case 'TransferHelper: TRANSFER_FROM_FAILED':
       return t`The input token cannot be transferred. There may be an issue with the input token.`
     case 'UniswapV2: TRANSFER_FAILED':
@@ -195,7 +185,7 @@ export function swapErrorToUserReadableMessage(error: any): string {
     case 'Too little received':
     case 'Too much requested':
     case 'STF':
-      return t`This transaction will not succeed due to price movement. Try increasing your slippage tolerance.`
+      return t`This transaction will not succeed due to price movement. Try increasing your slippage tolerance to 2.1%!`
     case 'TF':
       return t`The output token cannot be transferred. There may be an issue with the output token.`
     default:
@@ -203,7 +193,7 @@ export function swapErrorToUserReadableMessage(error: any): string {
         console.error(error, reason)
         return t`An error occurred when trying to execute this swap. You may need to increase your slippage tolerance. If that does not work, there may be an incompatibility with the token you are trading. Note fee on transfer and rebase tokens are incompatible with Uniswap V3.`
       }
-      return t`Unknown error${reason ? `: "${reason}"` : ''}. Try increasing your slippage tolerance.`
+      return t`Unknown error${reason ? `: "${reason}"` : ''}. Try increasing your slippage tolerance to 2.1%!`
   }
 }
 

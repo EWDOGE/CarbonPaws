@@ -180,66 +180,36 @@ export default function Remove() {
     // we have approval, use normal remove liquidity
     if (approval === ApprovalState.APPROVED) {
       // removeLiquidityETH
-      if (oneCurrencyIsETH) {
-        methodNames = ['removeLiquidityETH', 'removeLiquidityETHSupportingFeeOnTransferTokens']
-        args = [
-          currencyBIsETH ? tokenA.address : tokenB.address,
-          liquidityAmount.quotient.toString(),
-          amountsMin[currencyBIsETH ? Field.CURRENCY_A : Field.CURRENCY_B].toString(),
-          amountsMin[currencyBIsETH ? Field.CURRENCY_B : Field.CURRENCY_A].toString(),
-          account,
-          deadline.toHexString(),
-        ]
-      }
       // removeLiquidity
-      else {
-        methodNames = ['removeLiquidity']
-        args = [
-          tokenA.address,
-          tokenB.address,
-          liquidityAmount.quotient.toString(),
-          amountsMin[Field.CURRENCY_A].toString(),
-          amountsMin[Field.CURRENCY_B].toString(),
-          account,
-          deadline.toHexString(),
-        ]
-      }
+      methodNames = ['removeLiquidity']
+      args = [
+        tokenA.address,
+        tokenB.address,
+        liquidityAmount.quotient.toString(),
+        amountsMin[Field.CURRENCY_A].toString(),
+        amountsMin[Field.CURRENCY_B].toString(),
+        account,
+        deadline.toHexString(),
+      ]
     }
     // we have a signature, use permit versions of remove liquidity
     else if (signatureData !== null) {
       // removeLiquidityETHWithPermit
-      if (oneCurrencyIsETH) {
-        methodNames = ['removeLiquidityETHWithPermit', 'removeLiquidityETHWithPermitSupportingFeeOnTransferTokens']
-        args = [
-          currencyBIsETH ? tokenA.address : tokenB.address,
-          liquidityAmount.quotient.toString(),
-          amountsMin[currencyBIsETH ? Field.CURRENCY_A : Field.CURRENCY_B].toString(),
-          amountsMin[currencyBIsETH ? Field.CURRENCY_B : Field.CURRENCY_A].toString(),
-          account,
-          signatureData.deadline,
-          false,
-          signatureData.v,
-          signatureData.r,
-          signatureData.s,
-        ]
-      }
       // removeLiquidityETHWithPermit
-      else {
-        methodNames = ['removeLiquidityWithPermit']
-        args = [
-          tokenA.address,
-          tokenB.address,
-          liquidityAmount.quotient.toString(),
-          amountsMin[Field.CURRENCY_A].toString(),
-          amountsMin[Field.CURRENCY_B].toString(),
-          account,
-          signatureData.deadline,
-          false,
-          signatureData.v,
-          signatureData.r,
-          signatureData.s,
-        ]
-      }
+      methodNames = ['removeLiquidityWithPermit']
+      args = [
+        tokenA.address,
+        tokenB.address,
+        liquidityAmount.quotient.toString(),
+        amountsMin[Field.CURRENCY_A].toString(),
+        amountsMin[Field.CURRENCY_B].toString(),
+        account,
+        signatureData.deadline,
+        false,
+        signatureData.v,
+        signatureData.r,
+        signatureData.s,
+      ]
     } else {
       throw new Error('Attempting to confirm without approval or a signature. Please contact support.')
     }
@@ -635,7 +605,9 @@ export default function Remove() {
         )}
         <div className="grid gap-1 pb-6">
           <div className="flex items-center justify-between">
-            <div className="text-sm text-secondary">{i18n._(t`${currencyA?.symbol}/${currencyB?.symbol} Burned`)}</div>
+            <div className="text-sm text-secondary">
+              {i18n._(t`${currencyA?.symbol}/${currencyB?.symbol} CLP burned`)}
+            </div>
             <div className="text-sm font-bold justify-center items-center flex right-align pl-1.5 text-high-emphasis">
               {parsedAmounts[Field.LIQUIDITY]?.toSignificant(6)}
             </div>
@@ -717,7 +689,7 @@ export default function Remove() {
 
       <Container id="remove-liquidity-page" maxWidth="2xl" className="space-y-4">
         <DoubleGlowShadow>
-          <div className="p-4 space-y-4 rounded bg-dark-900" style={{ zIndex: 1 }}>          
+          <div className="p-4 space-y-4 rounded bg-dark-900" style={{ zIndex: 1 }}>
             <Header input={currencyA} output={currencyB} allowedSlippage={allowedSlippage} />
             <div>
               <TransactionConfirmationModal
@@ -764,9 +736,9 @@ export default function Remove() {
                             <RowBetween className="text-sm">
                               {oneCurrencyIsETH ? (
                                 <Link
-                                  href={`/exchange/remove/${currencyA?.isNative ? WNATIVE[chainId].address : currencyIdA}/${
-                                    currencyB?.isNative ? WNATIVE[chainId].address : currencyIdB
-                                  }`}
+                                  href={`/exchange/remove/${
+                                    currencyA?.isNative ? WNATIVE[chainId].address : currencyIdA
+                                  }/${currencyB?.isNative ? WNATIVE[chainId].address : currencyIdB}`}
                                 >
                                   <a className="text-baseline text-yellow opacity-80 hover:opacity-100 focus:opacity-100 whitespace-nowrap">
                                     Receive W{NATIVE[chainId].symbol}
@@ -774,9 +746,9 @@ export default function Remove() {
                                 </Link>
                               ) : oneCurrencyIsWETH ? (
                                 <Link
-                                  href={`/exchange/remove/${currencyA?.equals(WNATIVE[chainId]) ? 'ETH' : currencyIdA}/${
-                                    currencyB?.equals(WNATIVE[chainId]) ? 'ETH' : currencyIdB
-                                  }`}
+                                  href={`/exchange/remove/${
+                                    currencyA?.equals(WNATIVE[chainId]) ? 'ETH' : currencyIdA
+                                  }/${currencyB?.equals(WNATIVE[chainId]) ? 'ETH' : currencyIdB}`}
                                 >
                                   <a className="text-baseline text-blue opacity-80 hover:opacity-100 whitespace-nowrap">
                                     Receive {NATIVE[chainId].symbol}
@@ -846,7 +818,7 @@ export default function Remove() {
         </DoubleGlowShadow>
         <div className="flex items-center px-4">
           <NavLink href="/exchange/pool">
-            <a className="flex items-center space-x-2 font-medium text-center cursor-pointer text-base hover:text-high-emphesis">
+            <a className="flex items-center space-x-2 text-base font-medium text-center cursor-pointer hover:text-high-emphesis">
               <span>{i18n._(t`View Liquidity Positions`)}</span>
               {/* <svg
                 xmlns="http://www.w3.org/2000/svg"

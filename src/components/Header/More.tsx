@@ -11,6 +11,12 @@ import NavLink from '../NavLink'
 
 const items = (i18n: I18n) => [
   {
+    name: i18n._(t`NFT Marketplace`),
+    description: i18n._(t`Soon to be Raregems`),
+    href: 'https://swappers.green/?collection=%C4%ABinu',
+    external: true,
+  },
+  {
     name: i18n._(t`Github`),
     description: i18n._(t`Audit or copy WDGAF`),
     href: 'https://github.com/EWDOGE',

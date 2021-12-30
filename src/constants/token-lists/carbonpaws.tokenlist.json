@@ -15,7 +15,7 @@
       "green",
       "sustainable"
   ],
-  "logoURI": "https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/susu.svg",
+  "logoURI": "https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/susu.svg",
   "tags": {
       "wrapped": {
           "name": "wrapped",
@@ -37,7 +37,7 @@
           "name": "Susu Party",
           "decimals": 18,
           "symbol": "xSUSU",
-          "logoURI": "https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/0x1C41d2223dc95605fc4395294e65f170A4Fb1b40.png",
+          "logoURI": "https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0x1C41d2223dc95605fc4395294e65f170A4Fb1b40.png",
           "tags": [
               "native"
           ]
@@ -48,7 +48,7 @@
           "name": "renBTC",
           "decimals": 8,
           "symbol": "renBTC",
-          "logoURI": "https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/0xcCf4e983B930B97F9cC0d2A20E66AFb781537cFc.png",
+          "logoURI": "https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0xcCf4e983B930B97F9cC0d2A20E66AFb781537cFc.png",
           "tags": [
               "bridged"
           ]
@@ -59,7 +59,7 @@
           "name": "Susu Token",
           "decimals": 18,
           "symbol": "SUSU",
-          "logoURI": "https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/0x9cd9CAECDC816C3E7123A4F130A91A684D01f4Dc.png",
+          "logoURI": "https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0x9cd9CAECDC816C3E7123A4F130A91A684D01f4Dc.png",
           "tags": [
               "native"
           ]
@@ -70,7 +70,7 @@
           "name": "Smudge",
           "decimals": 18,
           "symbol": "SMUDGE",
-          "logoURI": "https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/0x3Dae074A5B125B9847e41b5Ee20aC86D92ab77b1.png",
+          "logoURI": "https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0x3Dae074A5B125B9847e41b5Ee20aC86D92ab77b1.png",
           "tags": [
               "native"
           ]
@@ -81,7 +81,7 @@
           "name": "Ocean Token",
           "decimals": 18,
           "symbol": "OCEAN",
-          "logoURI": "https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/0x593122AAE80A6Fc3183b2AC0c4ab3336dEbeE528.png",
+          "logoURI": "https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0x593122AAE80A6Fc3183b2AC0c4ab3336dEbeE528.png",
           "tags": [
               "bridged"
           ]
@@ -92,7 +92,7 @@
           "name": "USD Coin",
           "decimals": 6,
           "symbol": "USDC",
-          "logoURI": "https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/0x9DaD43ee9E09837aeAca21799c88613e8E7c67dd.png",
+          "logoURI": "https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0x9DaD43ee9E09837aeAca21799c88613e8E7c67dd.png",
           "tags": [
               "bridged"
           ]
@@ -103,7 +103,7 @@
           "name": "DAI",
           "decimals": 18,
           "symbol": "DAI",
-          "logoURI": "https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/0x3862F260e94904aaAe628DdF427b1F662652BBD2.png",
+          "logoURI": "https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0x3862F260e94904aaAe628DdF427b1F662652BBD2.png",
           "tags": [
               "bridged"
           ]
@@ -114,7 +114,7 @@
           "name": "Wrapped ETH",
           "decimals": 18,
           "symbol": "WETH",
-          "logoURI": "https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/0xe1BCdcd419Eb96d67D3eAb707FC108eD9172aDc7.png",
+          "logoURI": "https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0xe1BCdcd419Eb96d67D3eAb707FC108eD9172aDc7.png",
           "tags": [
               "bridged"
           ]
@@ -125,7 +125,7 @@
           "name": "Wrapped EWT",
           "decimals": 18,
           "symbol": "WEWT",
-          "logoURI": "https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/0x6b3bd0478DF0eC4984b168Db0E12A539Cc0c83cd.png",
+          "logoURI": "https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0x6b3bd0478DF0eC4984b168Db0E12A539Cc0c83cd.png",
           "tags": [
               "wrapped"
           ]
@@ -136,7 +136,7 @@
           "name": "EnergyWeb Doge",
           "decimals": 18,
           "symbol": "EWD",
-          "logoURI": "https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891.png",
+          "logoURI": "https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891.png",
           "tags": [
               "native"
           ]
@@ -148,6 +148,17 @@
         "decimals": 18,
         "symbol": "WBCT",
         "logoURI": "https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x2F800Db0fdb5223b3C3f354886d907A671414A7F/logo.png",
+        "tags": [
+            "bridged"
+        ]
+    },
+    {
+        "chainId": 246,
+        "address": "0xA0Bf7285394026C452a6dd571b189733AD1d5834",
+        "name": "Doge Alliance",
+        "decimals": 18,
+        "symbol": "WDOGEALLY",
+        "logoURI": "https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xA0Bf7285394026C452a6dd571b189733AD1d5834/logo.png",
         "tags": [
             "bridged"
         ]

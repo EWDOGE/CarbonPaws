@@ -5,7 +5,7 @@ import { WrappedTokenInfo } from '../../state/lists/wrappedTokenInfo'
 import useHttpLocations from '../../hooks/useHttpLocations'
 
 export const getTokenLogoURL = (address: string, chainId: ChainId) => {
-  return `https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/${address}.png`
+  return `https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/${address}.png`
 }
 
 const BLOCKCHAIN = {
@@ -33,17 +33,14 @@ function getCurrencySymbol(currency) {
 function getCurrencyLogoUrls(currency) {
   const urls = []
   if (currency.chainId in BLOCKCHAIN) {
-    urls.push(
-      `https://raw.githubusercontent.com/carbonswap/assets/master/carbonswap/logo/${
-        currency.address
-      }.png`
-    )
+    urls.push(`https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/${currency.address}.png`)
   }
 
   return urls
 }
 
-const EnergyWebLogo = 'https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0x4fC53aEA7A4C6e898a8fA2545d725a0B48c614A4.png'
+const EnergyWebLogo =
+  'https://raw.githubusercontent.com/EWDOGE/assets/master/CarbonPaws/logo/0x4fC53aEA7A4C6e898a8fA2545d725a0B48c614A4.png'
 
 const logo: { readonly [chainId in ChainId]?: string } = {
   [ChainId.EWC]: EnergyWebLogo,

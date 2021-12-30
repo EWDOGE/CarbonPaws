@@ -6,6 +6,7 @@ import { SupportedChainId } from '../chains'
 export const EWC: { [key: string]: Token } = {
   DAI: new Token(ChainId.EWC, '0x3862F260e94904aaAe628DdF427b1F662652BBD2', 18, 'DAI', 'Dai Stablecoin'),
   EWD: new Token(ChainId.EWC, '0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891', 18, 'EWD', 'CarbonPaws Token'),
+  WBCT: new Token(ChainId.EWC, '0x62250f0b6a9923a19412469ad09f37a2aa367eda', 18, 'WBCT', 'Toucan Protocol'),
 }
 
 export const DAI = new Token(ChainId.EWC, '0x16e13C4cCcC031a0D7BAa34bcB39Aaf65b3C1891', 18, 'DAI', 'Dai')

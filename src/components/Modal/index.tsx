@@ -95,7 +95,7 @@ export default function Modal({
   initialFocusRef,
   children,
   padding = 5,
-  maxWidth = 420,
+  maxWidth = 500,
 }: ModalProps) {
   const fadeTransition = useTransition(isOpen, null, {
     config: { duration: 200 },

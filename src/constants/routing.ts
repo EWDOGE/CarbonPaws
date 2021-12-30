@@ -22,7 +22,7 @@ const WRAPPED_NATIVE_ONLY: ChainTokenList = {
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: ChainTokenList = {
-  [ChainId.EWC]: [...WRAPPED_NATIVE_ONLY[ChainId.EWC], EWC.DAI],
+  [ChainId.EWC]: [...WRAPPED_NATIVE_ONLY[ChainId.EWC], EWC.DAI, EWC.EWD],
 }
 
 export const ADDITIONAL_BASES: {
@@ -35,7 +35,11 @@ export const ADDITIONAL_BASES: {
  */
 export const CUSTOM_BASES: {
   [chainId: number]: { [tokenAddress: string]: Token[] }
-} = {}
+} = {
+  [ChainId.EWC]: {
+    [EWC.WBCT.address]: [EWC.EWD, EWC.DAI],
+  },
+}
 
 /**
  * Shows up in the currency select for swap and add liquidity
@@ -46,7 +50,7 @@ export const COMMON_BASES: ChainTokenList = {
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
-  [ChainId.EWC]: [...WRAPPED_NATIVE_ONLY[ChainId.EWC], EWC.DAI, EWC.EWD],
+  [ChainId.EWC]: [...WRAPPED_NATIVE_ONLY[ChainId.EWC], EWC.DAI, EWC.EWD, EWC.WBCT],
 }
 
 export const FACTORY_ADDRESS: { [chainId in ChainId]: string } = {
